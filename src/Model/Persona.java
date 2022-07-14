@@ -151,7 +151,7 @@ public class Persona {
     }
 
     private LocalDate getFechaNacimientoFormateada() {
-        return LocalDate.parse(fechaNacimiento);
+        return LocalDate.parse(getFechaNacimiento());
     }
 
 }

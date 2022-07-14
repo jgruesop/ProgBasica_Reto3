@@ -193,7 +193,7 @@ public class JfrPrincipal extends javax.swing.JFrame {
     private void menuFormularioClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFormularioClienteActionPerformed
         this.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
         this.escritorio.repaint();  // Permite limpiar la ventana principal              
-        InterGestionPersonas ventana = new InterGestionPersonas(empresa);             
+        InterGestionClientes ventana = new InterGestionClientes(empresa);             
         escritorio.add(ventana);
         ventana.show(); 
     }//GEN-LAST:event_menuFormularioClienteActionPerformed

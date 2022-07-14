@@ -19,7 +19,7 @@ public class Directivo extends Empleado {
     public Directivo(int categoria, char directivo, int id, String TID, 
             String documento, String nombre, String apellidos, String fechaNacimiento, 
             char genero, Double salario, Boolean subordinado) {
-        super(directivo, id, TID, documento, nombre, apellidos, fechaNacimiento, genero, salario, subordinado);
+        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, salario, subordinado, directivo);
         this.categoria = categoria;
     }
     
