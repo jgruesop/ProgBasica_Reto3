@@ -14,26 +14,28 @@ package Model;
  */
 public class Directivo extends Empleado {
 
-    private int categoria;    
+    private Integer categoria = 0;    
 
-    public Directivo(int categoria, char directivo, int id, String TID, 
-            String documento, String nombre, String apellidos, String fechaNacimiento, 
-            char genero, Double salario, Boolean subordinado) {
-        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, salario, subordinado, directivo);
+    public Directivo(int id, String TID, String documento, 
+            String nombre, String apellidos, String fechaNacimiento, char genero, 
+            Double salario, String subordinado, Integer categoria) {
+        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, salario, subordinado);
         this.categoria = categoria;
     }
+
+   
     
     /**
      * @return the categoria
      */
-    public int getCategoria() {
+    public Integer getCategoria() {
         return categoria;
     }
 
     /**
      * @param categoria the categoria to set
      */
-    public void setCategoria(int categoria) {
+    public void setCategoria(Integer categoria) {
         this.categoria = categoria;
     }
     

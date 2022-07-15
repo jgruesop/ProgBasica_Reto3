@@ -6,46 +6,46 @@
 package View;
 
 import Model.*;
+import java.awt.event.KeyEvent;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author Q-USER
+ * @author Jhonatan Grueso Perea
+ * @since 14/07/2022
+ * @version 1.2
+ *
  */
 public class InterGestionEmpleados extends javax.swing.JInternalFrame {
-    
-    private Empresa empresa;    
-    private Empleado empleado ;    
-    java.sql.Date sqlPackageDate;
-    SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-    DefaultTableModel modelo;    //Modelo por defecto de la Tabla
-    String fNac;
+
+    private Empresa empresa;
+    private Empleado empleado;
+    private Directivo directivo;
+    private java.sql.Date sqlPackageDate;
+    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private DefaultTableModel modelo;    //Modelo por defecto de la Tabla
+    private String fNac;
+    private boolean res = false;
+
     /**
      * Creates new form InterGestionEmpleados
      */
-    public InterGestionEmpleados() {
-        initComponents();
-        
-        inhabilitarbotones();
-        tablaEmpleados.getTableHeader().setReorderingAllowed(false);//Bloquea el movimiento de las columnas, e impide imvertir la información.
-        
-         //Permite centrar el JinternalFrame
-        int x = JfrPrincipal.escritorio.getWidth() - this.getWidth();
-        int y = JfrPrincipal.escritorio.getHeight() - this.getHeight();
-        setLocation(x / 2, y / 2);
-    }
-    
     public InterGestionEmpleados(Empresa empresa) {
         initComponents();
-        
+
         inhabilitarbotones();
+        //inhabilitarCampos();
         this.empresa = empresa;
-        
+
         tablaEmpleados.getTableHeader().setReorderingAllowed(false);//Bloquea el movimiento de las columnas, e impide imvertir la información.
-        
-         //Permite centrar el JinternalFrame
+
+        //Permite centrar el JinternalFrame
         int x = JfrPrincipal.escritorio.getWidth() - this.getWidth();
         int y = JfrPrincipal.escritorio.getHeight() - this.getHeight();
         setLocation(x / 2, y / 2);
@@ -84,10 +84,12 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         jLabel9 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
         txtFechaNac = new com.toedter.calendar.JDateChooser();
-        jCheckBox1 = new javax.swing.JCheckBox();
-        jCheckBox2 = new javax.swing.JCheckBox();
-        jTextField8 = new javax.swing.JTextField();
+        checkDirectivo = new javax.swing.JCheckBox();
+        checkSubordinado = new javax.swing.JCheckBox();
+        txtSalario = new javax.swing.JTextField();
         jLabel12 = new javax.swing.JLabel();
+        txtCategoria = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaEmpleados = new javax.swing.JTable();
@@ -154,29 +156,58 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         jLabel11.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel11.setText("Apellidos");
 
-        txtFechaNac.setDateFormatString("yyyy-mm-dd");
+        txtFechaNac.setDateFormatString("yyyy-MM-dd");
         txtFechaNac.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         txtFechaNac.setMinSelectableDate(new java.util.Date(-62135747926000L));
 
-        jCheckBox1.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jCheckBox1.setText("Es directivo?");
+        checkDirectivo.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        checkDirectivo.setText("Es directivo?");
+        checkDirectivo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                checkDirectivoMouseClicked(evt);
+            }
+        });
 
-        jCheckBox2.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        jCheckBox2.setText("Es subordinado?");
+        checkSubordinado.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        checkSubordinado.setText("Es subordinado?");
 
-        jTextField8.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        txtSalario.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        txtSalario.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtSalarioKeyTyped(evt);
+            }
+        });
 
         jLabel12.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel12.setText("Salario Neto");
+
+        txtCategoria.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        txtCategoria.setText("0");
+
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        jLabel2.setText("Categoria");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addContainerGap()
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel11)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addContainerGap()
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtDir))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addComponent(jLabel10)
@@ -187,51 +218,41 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnHombre)
                                 .addGap(18, 18, 18)
-                                .addComponent(btnMujer, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 73, Short.MAX_VALUE))
+                                .addComponent(btnMujer, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(boxTID, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jLabel3)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
+                                .addComponent(jLabel12)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtSalario))
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addComponent(jLabel5)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtTel, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jLabel8)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(txtEmail))))
-                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(jLabel6)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtDir, javax.swing.GroupLayout.DEFAULT_SIZE, 564, Short.MAX_VALUE))
+                                .addComponent(txtTel, javax.swing.GroupLayout.PREFERRED_SIZE, 152, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel12)
+                                .addComponent(jLabel8)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 171, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jCheckBox1)
-                                .addGap(18, 18, 18)
-                                .addComponent(jCheckBox2))
+                                .addComponent(txtEmail))
                             .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                    .addGroup(jPanel5Layout.createSequentialGroup()
-                                        .addComponent(jLabel1)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(boxTID, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(34, 34, 34)
-                                        .addComponent(jLabel3)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtDoc))
-                                    .addGroup(jPanel5Layout.createSequentialGroup()
-                                        .addComponent(jLabel4)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addComponent(jLabel11)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                        .addComponent(txtApellido, javax.swing.GroupLayout.PREFERRED_SIZE, 240, javax.swing.GroupLayout.PREFERRED_SIZE)))))))
-                .addGap(28, 28, 28))
+                                .addComponent(checkSubordinado)
+                                .addGap(18, 18, 18)
+                                .addComponent(checkDirectivo)
+                                .addGap(34, 34, 34)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtCategoria)))))
+                .addGap(16, 16, 16))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -268,13 +289,15 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
                     .addComponent(txtEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtTel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 14, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField8, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jCheckBox1)
-                    .addComponent(jCheckBox2))
-                .addContainerGap(24, Short.MAX_VALUE))
+                    .addComponent(txtSalario, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(checkSubordinado)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(checkDirectivo)
+                    .addComponent(txtCategoria, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder("Datos"));
@@ -285,32 +308,15 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
 
             },
             new String [] {
-                "Id", "TID", "Documento", "Nombres", "Apellidos", "Fecha Nacimiento", "Genero", "Telefono", "Correo", "Subordinado?", "Directivo?", "Salario Bruto"
-            }
-        ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false, false, false, false, false
-            };
 
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
+            }
+        ));
+        tablaEmpleados.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaEmpleadosMouseClicked(evt);
             }
         });
         jScrollPane1.setViewportView(tablaEmpleados);
-        if (tablaEmpleados.getColumnModel().getColumnCount() > 0) {
-            tablaEmpleados.getColumnModel().getColumn(0).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(1).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(2).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(3).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(4).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(5).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(6).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(7).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(8).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(9).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(10).setResizable(false);
-            tablaEmpleados.getColumnModel().getColumn(11).setResizable(false);
-        }
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -318,7 +324,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 885, Short.MAX_VALUE)
+                .addComponent(jScrollPane1)
                 .addContainerGap())
         );
         jPanel3Layout.setVerticalGroup(
@@ -389,8 +395,8 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel7Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnGuardar2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnCancelar2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -398,7 +404,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
                 .addComponent(btnActualizar2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnEliminar2, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(77, Short.MAX_VALUE))
+                .addGap(46, 46, 46))
         );
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
@@ -407,18 +413,17 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(53, 53, 53))
-                    .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 817, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(10, 10, 10)
-                        .addComponent(jLabel7)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jLabel7))
+                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -429,9 +434,9 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jPanel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGap(10, 10, 10)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
         );
@@ -440,9 +445,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 949, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(37, Short.MAX_VALUE))
+            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -454,43 +457,130 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void checkDirectivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_checkDirectivoMouseClicked
+        
+        if (checkDirectivo.isSelected()) {
+            txtCategoria.setEnabled(true);
+        } else {
+            txtCategoria.setEnabled(false);            
+        }
+
+    }//GEN-LAST:event_checkDirectivoMouseClicked
+
+    private void txtSalarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyTyped
+        char car = evt.getKeyChar();
+        //Permite validar que solo se ingresen datos numéricos.
+        if((car < '0' || car > '9') && (car != (char)KeyEvent.VK_DELETE)){
+            evt.consume();
+        }
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {            
+            txtSalario.requestFocus();
+        }
+    }//GEN-LAST:event_txtSalarioKeyTyped
+
+    private void tablaEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaEmpleadosMouseClicked
+        
+        int fila = tablaEmpleados.getSelectedRow();        
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(null, "No se ha seleccionadao ningún registro de la tabla");
+            btnActualizar2.setEnabled(false);
+            btnEliminar2.setEnabled(false);            
+        } else {          
+            
+            habilitarbotones();            
+            String TID = (String)tablaEmpleados.getValueAt(fila, 1);
+            String doc = (String)tablaEmpleados.getValueAt(fila, 2);
+            String nom = (String)tablaEmpleados.getValueAt(fila, 3);
+            String apel = (String)tablaEmpleados.getValueAt(fila, 4);            
+            String fNac = (String) tablaEmpleados.getValueAt(fila, 5);            
+            String genero = (String)tablaEmpleados.getValueAt(fila, 6);
+            //String tel =  (String)tablaEmpleados.getValueAt(fila, 8);            
+            //String mail = (String)tablaEmpleados.getValueAt(fila, 9);
+            //String dir = (String)tablaEmpleados.getValueAt(fila, 10);            
+            String salario = (String)tablaEmpleados.getValueAt(fila, 8);            
+            String subordinado = (String)tablaEmpleados.getValueAt(fila, 9);            
+            String categoria = (String)tablaEmpleados.getValueAt(fila, 10);            
+            
+            
+            boxTID.setSelectedItem(TID);
+            txtDoc.setText(doc);
+            txtNombre.setText(nom);       
+            txtApellido.setText(apel); 
+            Date date = null;
+            try {
+                date = new SimpleDateFormat("yyyy-mm-dd").parse(fNac);
+            } catch (ParseException ex) {
+                Logger.getLogger(InterGestionClientes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            txtFechaNac.setDate(date);
+            if ("H".equals(genero)) {
+                btnHombre.setSelected(true);
+            } else {
+                btnMujer.setSelected(true);
+            }
+            //txtTel.setText(tel);
+            //txtDir.setText(dir);
+            //txtEmail.setText(mail);
+            txtSalario.setText(salario);
+            if (subordinado.equals("SI")) { checkSubordinado.setSelected(true); 
+            } else { checkSubordinado.setSelected(false); }
+            if (categoria != null) { checkDirectivo.setSelected(true);
+            } else { checkDirectivo.setSelected(false); }            
+            txtCategoria.setText(categoria);
+        }
+        
+    }//GEN-LAST:event_tablaEmpleadosMouseClicked
+
     private void btnCancelar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar2ActionPerformed
         limpiarCampos();
-        //habilitarbotonesLimpiar();
-        //obtenerListarClientes();
-        //disenoTabla();
+        habilitarbotonesLimpiar();
+        obtenerListarEmpleados();
+        disenoTabla();
     }//GEN-LAST:event_btnCancelar2ActionPerformed
 
     private void btnGuardar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar2ActionPerformed
+
         int id = 0;
         String nombre = txtNombre.getText().toUpperCase();
         String doc = txtDoc.getText();
         String apel = txtApellido.getText().toUpperCase();
-        String TID = boxTID.getSelectedItem().toString();
-        String tel = txtTel.getText();
-        String dir = txtDir.getText().toUpperCase();
-        String email = txtEmail.getText();
+        String TID = boxTID.getSelectedItem().toString();        
         char genero = ' ';
+        String subor = " ";
+        Integer categoria = 0;
 
-        if (btnHombre.isSelected()){ genero = 'H'; }
-        if(btnMujer.isSelected()) { genero = 'M'; }
+        if (txtCategoria.getText().isEmpty()){
+            categoria = Integer.parseInt(txtCategoria.getText());
+        }
+        if (checkSubordinado.isSelected()) { subor = "SI"; }
+        if (btnHombre.isSelected()) { genero = 'H'; }
+        if (btnMujer.isSelected()) { genero = 'M'; }
 
         // Compara si todos los campos estan vacios
-        boolean comp1 = nombre.equals("") || apel.equals("") || TID.equals("Seleccione...") || txtFechaNac.getDate() == null ;
-        boolean comp2 = tel.equals("") ||  dir.equals("") || email.equals("") || genero == ' ';
+        boolean comp1 = TID.equals("Seleccione...") || nombre.equals("") || apel.equals("");
+        boolean comp2 = genero == ' ' || txtFechaNac.getDate() == null || txtSalario.getText().isEmpty();
 
-        if ( comp1 || comp2 ){
-            JOptionPane.showMessageDialog(null, "Debe diligenciar todos los campos.");
+        if (comp1 || comp2) {
+            JOptionPane.showMessageDialog(null, "Faltan campos por diligenciar.");
         } else {
             //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
             sqlPackageDate = new java.sql.Date(txtFechaNac.getDate().getTime());
             /// Da formato a la fecha obtenida en la linea anterior
             fNac = df.format(sqlPackageDate);
-            empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, 0.0, false, '0');
-            boolean res = empresa.agregarEmpleado(empleado);
+            Double salario = Double.parseDouble(txtSalario.getText());
+            // Determina si la casilla directivo fue seleccionada            
+            if (checkDirectivo.isSelected()) {
+                directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero, salario, subor, categoria);
+                res = empresa.agregarEmpleado(directivo);
+            } else {
+                txtCategoria.setEnabled(false);
+                empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, salario, subor);
+                res = empresa.agregarEmpleado(empleado);
+            }
+
             if (res == true) {
                 JOptionPane.showMessageDialog(null, "Datos almacenados exitosamente.");
-                obtenerListarClientes();
+                obtenerListarEmpleados();
                 disenoTabla();
                 limpiarCampos();
             } else {
@@ -505,18 +595,21 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         String nombre = txtNombre.getText().toUpperCase();
         String doc = txtDoc.getText();
         String apel = txtApellido.getText().toUpperCase();
-        String TID = boxTID.getSelectedItem().toString();
-        String tel = txtTel.getText();
-        String dir = txtDir.getText().toUpperCase();
-        String email = txtEmail.getText();
+        String TID = boxTID.getSelectedItem().toString();        
         char genero = ' ';
+        String subor = " ";
+        Integer categoria = 0;
 
-        if (btnHombre.isSelected()){ genero = 'H'; }
-        if(btnMujer.isSelected()) { genero = 'M'; }
+        if (txtCategoria.getText().isEmpty()){
+            categoria = Integer.parseInt(txtCategoria.getText());
+        }
+        if (checkSubordinado.isSelected()) { subor = "SI"; }
+        if (btnHombre.isSelected()) { genero = 'H'; }
+        if (btnMujer.isSelected()) { genero = 'M'; }
 
         // Compara si todos los campos estan vacios
-        boolean comp1 = nombre.equals("") || apel.equals("") || TID.equals("Seleccione...") || txtFechaNac.getDate() == null ;
-        boolean comp2 = tel.equals("") ||  dir.equals("") || email.equals("") || genero == ' ';
+        boolean comp1 = TID.equals("Seleccione...") || nombre.equals("") || apel.equals("");
+        boolean comp2 = genero == ' ' || txtFechaNac.getDate() == null || txtSalario.getText().isEmpty();
 
         int fila = tablaEmpleados.getSelectedRow();
         if (fila == -1) {
@@ -529,14 +622,22 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
                 java.sql.Date sqlPackageDate = new java.sql.Date(txtFechaNac.getDate().getTime());
                 /// Da formato a la fecha obtenida en la linea anterior
                 String fNac = df.format(sqlPackageDate);
-                empleado = new Empleado(id, TID, doc, nombre, apel, fNac,  genero, 0.0, false, '0');
-                boolean res = empresa.modificarEmpleado(fila, empleado);
+                Double salario = Double.parseDouble(txtSalario.getText());
+                // Determina si la casilla directivo fue seleccionada
+                if (checkDirectivo.isSelected()) {
+                    directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero, salario, subor, categoria);
+                    res = empresa.modificarEmpleado(fila, empleado);
+                } else {
+                    empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, salario, subor);
+                    res = empresa.modificarEmpleado(fila, empleado);
+                }
                 if (res == true) {
                     JOptionPane.showMessageDialog(null, "Datos Actualizados exitosamente.");
-                    //limpiarTabla(modelo);
-                    obtenerListarClientes();
+                    obtenerListarEmpleados();
                     disenoTabla();
                     limpiarCampos();
+                    inhabilitarCampos();
+                    habilitarbotones();
                 } else {
                     JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
                 }
@@ -546,61 +647,38 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
 
     private void btnEliminar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminar2ActionPerformed
 
-        int id = 0;
-        String nombre = txtNombre.getText().toUpperCase();
-        String doc = txtDoc.getText();
-        String apel = txtApellido.getText().toUpperCase();
-        String TID = boxTID.getSelectedItem().toString();
-        String tel = txtTel.getText();
-        String dir = txtDir.getText().toUpperCase();
-        String email = txtEmail.getText();
-        char genero = ' ';
-
-        if (btnHombre.isSelected()){ genero = 'H'; }
-        if(btnMujer.isSelected()) { genero = 'M'; }
-
-        // Compara si todos los campos estan vacios
-        boolean comp1 = nombre.equals("") || apel.equals("") || TID.equals("Seleccione...") || txtFechaNac.getDate() == null ;
-        boolean comp2 = tel.equals("") ||  dir.equals("") || email.equals("") || genero == ' ';
         inhabilitarCampos();
         int fila = tablaEmpleados.getSelectedRow();
         if (fila == -1) {
             JOptionPane.showMessageDialog(null, "Seleccionar el registro de la tabla");
-        } else {
-            if (comp1 || comp2) {
-                JOptionPane.showMessageDialog(null, "La información no registra ningún cambio.");
-            } else {
-                //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
-                java.sql.Date sqlPackageDate = new java.sql.Date(txtFechaNac.getDate().getTime());
-                /// Da formato a la fecha obtenida en la linea anterior
-                String fNac = df.format(sqlPackageDate);
-                empleado = new Empleado(id, TID, doc, nombre, apel, fNac,  genero, 0.0, false, '0');
-                int op = JOptionPane.showConfirmDialog(null, "Esta seguro de eliminar el registro?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
-                if (op == JOptionPane.YES_OPTION) {
-                    boolean res = empresa.eliminarCliente(fila);
-                    if (res == true) {
-                        JOptionPane.showMessageDialog(null, "Registro eliminado exitosamente.");
-                        obtenerListarClientes();
-                        limpiarCampos();
-                        habilitarCampos();
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
-                    }
+        } else {           
+            int op = JOptionPane.showConfirmDialog(null, "Esta seguro de eliminar "
+                + "el registro?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+            if (op == JOptionPane.YES_OPTION) {
+                boolean res = empresa.eliminarCliente(fila);
+                if (res == true) {
+                    JOptionPane.showMessageDialog(null, "Registro eliminado exitosamente.");
+                    obtenerListarEmpleados();
+                    limpiarCampos();
+                    habilitarCampos();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
                 }
-                obtenerListarClientes();
-                disenoTabla();
-                limpiarCampos();
-                inhabilitarbotones();
-                habilitarCampos();
             }
+            obtenerListarEmpleados();
+            disenoTabla();
+            limpiarCampos();
+            inhabilitarbotones();
+            habilitarCampos();
         }
     }//GEN-LAST:event_btnEliminar2ActionPerformed
 
-/***
+    /**
+     * *
      * Metodo para listar los clientes en la tabla
      */
-    public void obtenerListarClientes() {       
-        
+    public void obtenerListarEmpleados() {
+
         modelo = new DefaultTableModel();
         modelo.addColumn("Id");
         modelo.addColumn("Tid");
@@ -609,80 +687,80 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         modelo.addColumn("Apellidos");
         modelo.addColumn("Fecha Nacimiento");
         modelo.addColumn("Genero");
-        modelo.addColumn("Edad");        
-        modelo.addColumn("Teléfono");
-        modelo.addColumn("Correo electrónico");
-        modelo.addColumn("Dirección");
-        
-        String[] user = new String[11];
-        
-        for (int i = 0; i < empresa.getClientes().size(); i++) {
-            
-            user[0] = String.valueOf(empresa.getClientes().get(i).getId());
-            user[1] = String.valueOf(empresa.getClientes().get(i).getTID());
-            user[2] = String.valueOf(empresa.getClientes().get(i).getDocumento());
-            user[3] = String.valueOf(empresa.getClientes().get(i).getNombre());
-            user[4] = String.valueOf(empresa.getClientes().get(i).getApellidos());
-            user[5] = String.valueOf(empresa.getClientes().get(i).getFechaNacimiento());
-            user[6] = String.valueOf(empresa.getClientes().get(i).getGenero());
-            user[7] = String.valueOf(empleado.calcularEdad());
-            user[8] = String.valueOf(empresa.getClientes().get(i).getTelefono());
-            user[9] = String.valueOf(empresa.getClientes().get(i).getEmail());
-            user[10] = String.valueOf(empresa.getClientes().get(i).getDireccion());
+        modelo.addColumn("Edad");
+        modelo.addColumn("Salario Neto");
+        modelo.addColumn("Directivo");
+        modelo.addColumn("Subordinado");
+        modelo.addColumn("Categoria");
+
+        String[] user = new String[12];
+
+        for (int i = 0; i < empresa.getEmpleados().size(); i++) {
+
+            user[0] = String.valueOf(empresa.getEmpleados().get(i).getId());
+            user[1] = String.valueOf(empresa.getEmpleados().get(i).getTID());
+            user[2] = String.valueOf(empresa.getEmpleados().get(i).getDocumento());
+            user[3] = String.valueOf(empresa.getEmpleados().get(i).getNombre());
+            user[4] = String.valueOf(empresa.getEmpleados().get(i).getApellidos());
+            user[5] = String.valueOf(empresa.getEmpleados().get(i).getFechaNacimiento());
+            user[6] = String.valueOf(empresa.getEmpleados().get(i).getGenero());
+            //user[7] = String.valueOf(empleado.calcularEdad());
+            user[8] = String.valueOf(empresa.getEmpleados().get(i).getSalario());
+            user[9] = String.valueOf(empresa.getEmpleados().get(i).getSubordinado());
+            //user[10] = String.valueOf(directivo.getCategoria());
             modelo.addRow(user);
         }
         tablaEmpleados.setModel(modelo);
     }
-    
-     public void habilitarCampos() {
+
+    public void habilitarCampos() {
         boxTID.setEnabled(true);
         txtDoc.setEnabled(true);
-        txtNombre.setEnabled(true);       
-        txtApellido.setEnabled(true); 
+        txtNombre.setEnabled(true);
+        txtApellido.setEnabled(true);
         txtFechaNac.setEnabled(true);
         btnHombre.setEnabled(true);
         btnMujer.setEnabled(true);
-        txtTel.setEnabled(true);
-        txtDir.setEnabled(true);
-        txtEmail.setEnabled(true);     
     }
 
     public void inhabilitarCampos() {
         boxTID.setEnabled(false);
         txtDoc.setEnabled(false);
-        txtNombre.setEnabled(false);       
-        txtApellido.setEnabled(false); 
+        txtNombre.setEnabled(false);
+        txtApellido.setEnabled(false);
         txtFechaNac.setEnabled(false);
         btnHombre.setEnabled(false);
         btnMujer.setEnabled(false);
         txtTel.setEnabled(false);
         txtDir.setEnabled(false);
         txtEmail.setEnabled(false);
+        txtCategoria.setEnabled(false);
     }
 
     public void inhabilitarbotones() {
         btnGuardar2.setEnabled(true);
         btnActualizar2.setEnabled(false);
-        btnEliminar2.setEnabled(false);        
+        btnEliminar2.setEnabled(false);
     }
 
     public void habilitarbotonesLimpiar() {
-        obtenerListarClientes();
+        obtenerListarEmpleados();
         disenoTabla();
         btnGuardar2.setEnabled(true);
         btnActualizar2.setEnabled(false);
-        btnEliminar2.setEnabled(false);        
+        btnEliminar2.setEnabled(false);
     }
-      public void habilitarbotones() {        
+
+    public void habilitarbotones() {
         btnGuardar2.setEnabled(false);
         btnActualizar2.setEnabled(true);
-        btnEliminar2.setEnabled(true);        
+        btnEliminar2.setEnabled(true);
     }
-    
+
     /**
      * Metodo para limpiar pantalla
      */
-    public void limpiarCampos(){
+    public void limpiarCampos() {
         txtDoc.setText("");
         txtNombre.setText("");
         txtApellido.setText("");
@@ -690,10 +768,14 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         txtTel.setText("");
         txtDir.setText("");
         txtEmail.setText("");
-        txtFechaNac.setDate(null);         
+        txtFechaNac.setDate(null);
         radioGenero.clearSelection();
+        txtSalario.setText("");
+        checkSubordinado.setSelected(false);
+        checkDirectivo.setSelected(false);
+        txtCategoria.setText("0");
     }
-    
+
     //Método para diseñar las columnas de la tabla Empresa
     void disenoTabla() {
         //Redimensionar el tamaño de las columnas de la tabla.        
@@ -742,29 +824,22 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         tablaEmpleados.getColumnModel().getColumn(9).setPreferredWidth(0);
 
     }
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox<String> boxTID;
-    private javax.swing.JButton btnActualizar;
-    private javax.swing.JButton btnActualizar1;
     private javax.swing.JButton btnActualizar2;
-    private javax.swing.JButton btnCancelar;
-    private javax.swing.JButton btnCancelar1;
     private javax.swing.JButton btnCancelar2;
-    private javax.swing.JButton btnEliminar;
-    private javax.swing.JButton btnEliminar1;
     private javax.swing.JButton btnEliminar2;
-    private javax.swing.JButton btnGuardar;
-    private javax.swing.JButton btnGuardar1;
     private javax.swing.JButton btnGuardar2;
     private javax.swing.JRadioButton btnHombre;
     private javax.swing.JRadioButton btnMujer;
-    private javax.swing.JCheckBox jCheckBox1;
-    private javax.swing.JCheckBox jCheckBox2;
+    private javax.swing.JCheckBox checkDirectivo;
+    private javax.swing.JCheckBox checkSubordinado;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -774,21 +849,20 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
     private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JTextField jTextField8;
     public javax.swing.ButtonGroup radioGenero;
     private javax.swing.JTable tablaEmpleados;
     private javax.swing.JTextField txtApellido;
+    private javax.swing.JTextField txtCategoria;
     private javax.swing.JTextField txtDir;
     private javax.swing.JTextField txtDoc;
     private javax.swing.JTextField txtEmail;
     private com.toedter.calendar.JDateChooser txtFechaNac;
     private javax.swing.JTextField txtNombre;
+    private javax.swing.JTextField txtSalario;
     private javax.swing.JTextField txtTel;
     // End of variables declaration//GEN-END:variables
 }

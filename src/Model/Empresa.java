@@ -262,7 +262,7 @@ public class Empresa {
      */
     public boolean modificarEmpleado(int indiceEmpleado, Empleado empleado) {
         try {
-            this.empleados.add(indiceEmpleado, empleado);
+            this.empleados.set(indiceEmpleado, empleado);
             return true;
         } catch (Exception e) {
             System.out.println(e.getMessage());

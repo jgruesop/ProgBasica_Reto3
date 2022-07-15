@@ -20,13 +20,10 @@ public class JfrPrincipal extends javax.swing.JFrame {
      * Creates new form JfrPrincipal
      */
     public JfrPrincipal() {
-        if (empresa == null) {
-            this.empresa = new Empresa("","","","","","");
-        }else {
-            this.empresa = new Empresa(empresa.getNombre(), empresa.getNIT(), 
-                empresa.getTelfono(), empresa.getDireccion(), empresa.getEmail(), 
-                empresa.getActEconomica());
-        }
+        
+        this.empresa = new Empresa("Harineras del Valle","90014802105", "3185548774",
+                "Kra 35 # 25 35","jhonper86@gmail.com","Producción de harinas");
+        
         initComponents();
         this.setExtendedState(JfrPrincipal.MAXIMIZED_BOTH);//Permite ejecutar el formulario principal Maximizado
         this.setLocationRelativeTo(null);//Permite ubicar el formulario en el centro de la pantalla
@@ -63,8 +60,6 @@ public class JfrPrincipal extends javax.swing.JFrame {
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         menuConsultasEmpresa = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
-        menuAdministrarEmpresa = new javax.swing.JMenuItem();
-        jSeparator5 = new javax.swing.JPopupMenu.Separator();
         jMenuSalir = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -123,17 +118,6 @@ public class JfrPrincipal extends javax.swing.JFrame {
         jMenuInicio.add(menuConsultasEmpresa);
         jMenuInicio.add(jSeparator4);
 
-        menuAdministrarEmpresa.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        menuAdministrarEmpresa.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        menuAdministrarEmpresa.setText("Administrar");
-        menuAdministrarEmpresa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuAdministrarEmpresaActionPerformed(evt);
-            }
-        });
-        jMenuInicio.add(menuAdministrarEmpresa);
-        jMenuInicio.add(jSeparator5);
-
         jMenuSalir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         jMenuSalir.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         jMenuSalir.setText("Salir");
@@ -166,18 +150,10 @@ public class JfrPrincipal extends javax.swing.JFrame {
         System.exit(0);//Permite salir de la aplicación
     }//GEN-LAST:event_jMenuSalirActionPerformed
 
-    private void menuAdministrarEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuAdministrarEmpresaActionPerformed
-        this.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
-        this.escritorio.repaint();  // Permite limpiar la ventana principal              
-        InterListarEmpresa ventana = new InterListarEmpresa(empresa);
-        escritorio.add(ventana);
-        ventana.show(); 
-    }//GEN-LAST:event_menuAdministrarEmpresaActionPerformed
-
     private void menuConsultasEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConsultasEmpresaActionPerformed
         this.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
         this.escritorio.repaint();  // Permite limpiar la ventana principal              
-        InterConsultasEmpresa ventana = new InterConsultasEmpresa(empresa);
+        InterConsulta ventana = new InterConsulta(empresa);
         escritorio.add(ventana);
         ventana.show(); 
     }//GEN-LAST:event_menuConsultasEmpresaActionPerformed
@@ -241,8 +217,6 @@ public class JfrPrincipal extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
-    private javax.swing.JPopupMenu.Separator jSeparator5;
-    private javax.swing.JMenuItem menuAdministrarEmpresa;
     private javax.swing.JMenuItem menuConsultasEmpresa;
     private javax.swing.JMenuItem menuFormulariioEmpleado;
     private javax.swing.JMenuItem menuFormularioCliente;

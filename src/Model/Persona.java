@@ -24,7 +24,7 @@ public class Persona {
     private String nombre;
     private String apellidos;
     private String fechaNacimiento;    
-    private char genero;    
+    private char genero;          
 
     //Constructor
     public Persona(int id, String TID, String documento, String nombre, String apellidos,

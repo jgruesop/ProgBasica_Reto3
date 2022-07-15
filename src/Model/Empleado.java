@@ -1,8 +1,5 @@
 package Model;
 
-import java.time.LocalDate;
-import java.util.Date;
-
 /**
  *
  * @author Jhonatan Grueso Perea
@@ -13,13 +10,13 @@ public class Empleado extends Persona {
     
     //Atributos
     private Double salario;
-    private Boolean subordinado;    
+    private String subordinado;    
     
     //Contructor
 
     public Empleado( int id, String TID, String documento, 
             String nombre, String apellidos, String fechaNacimiento, char genero,
-            Double salario, Boolean subordinado, char directivo) {
+            Double salario, String subordinado ) {
         super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero);
         this.salario = salario;
         this.subordinado = subordinado;        
@@ -45,14 +42,14 @@ public class Empleado extends Persona {
     /**
      * @return the subordinado
      */
-    public Boolean getSubordinado() {
+    public String getSubordinado() {
         return subordinado;
     }
 
     /**
      * @param subordinado the subordinado to set
      */
-    public void setSubordinado(Boolean subordinado) {
+    public void setSubordinado(String subordinado) {
         this.subordinado = subordinado;
     }
 }

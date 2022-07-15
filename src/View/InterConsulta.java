@@ -12,14 +12,14 @@ import static View.JfrPrincipal.escritorio;
  *
  * @author Q-USER
  */
-public class InterConsultasEmpresa extends javax.swing.JInternalFrame {
+public class InterConsulta extends javax.swing.JInternalFrame {
     
     private Empresa empresa;
     
     /**
      * Creates new form InterConsultasEmpresa
      */
-    public InterConsultasEmpresa() {
+    public InterConsulta() {
         initComponents();
         
          //Permite centrar el JinternalFrame
@@ -28,7 +28,7 @@ public class InterConsultasEmpresa extends javax.swing.JInternalFrame {
         setLocation(x / 2, y / 2);
     }
     
-    public InterConsultasEmpresa(Empresa empresa) {
+    public InterConsulta(Empresa empresa) {
         initComponents();
         
         this.empresa = empresa;

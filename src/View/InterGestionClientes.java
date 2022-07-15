@@ -180,7 +180,7 @@ public class InterGestionClientes extends javax.swing.JInternalFrame {
         jLabel11.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel11.setText("Apellidos");
 
-        txtFechaNac.setDateFormatString("dd-MM-yyyy");
+        txtFechaNac.setDateFormatString("yyyy-MM-dd");
         txtFechaNac.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         txtFechaNac.setMinSelectableDate(new java.util.Date(-62135747926000L));
 
@@ -255,10 +255,10 @@ public class InterGestionClientes extends javax.swing.JInternalFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(txtFechaNac, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE)
                     .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnHombre)
-                        .addComponent(btnMujer)
-                        .addComponent(jLabel9, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
+                        .addComponent(btnMujer))
                     .addComponent(jLabel10, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
