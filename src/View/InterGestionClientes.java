@@ -396,9 +396,7 @@ public class InterGestionClientes extends javax.swing.JInternalFrame {
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
         limpiarCampos();
-        habilitarbotonesLimpiar();
-        obtenerListarClientes();
-        disenoTabla();
+        habilitarbotonesLimpiar();       
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed

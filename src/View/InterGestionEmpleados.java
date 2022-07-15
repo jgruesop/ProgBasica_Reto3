@@ -41,6 +41,8 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
 
         inhabilitarbotones();
         //inhabilitarCampos();
+        txtCategoria.setText("0");
+        txtCategoria.setEnabled(false);
         this.empresa = empresa;
 
         tablaEmpleados.getTableHeader().setReorderingAllowed(false);//Bloquea el movimiento de las columnas, e impide imvertir la información.
@@ -182,7 +184,6 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         jLabel12.setText("Salario Neto");
 
         txtCategoria.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        txtCategoria.setText("0");
 
         jLabel2.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel2.setText("Categoria");
@@ -461,8 +462,10 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         
         if (checkDirectivo.isSelected()) {
             txtCategoria.setEnabled(true);
+            txtCategoria.setText("");
         } else {
             txtCategoria.setEnabled(false);            
+            txtCategoria.setText("0");
         }
 
     }//GEN-LAST:event_checkDirectivoMouseClicked
@@ -493,10 +496,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             String nom = (String)tablaEmpleados.getValueAt(fila, 3);
             String apel = (String)tablaEmpleados.getValueAt(fila, 4);            
             String fNac = (String) tablaEmpleados.getValueAt(fila, 5);            
-            String genero = (String)tablaEmpleados.getValueAt(fila, 6);
-            //String tel =  (String)tablaEmpleados.getValueAt(fila, 8);            
-            //String mail = (String)tablaEmpleados.getValueAt(fila, 9);
-            //String dir = (String)tablaEmpleados.getValueAt(fila, 10);            
+            String genero = (String)tablaEmpleados.getValueAt(fila, 6);                      
             String salario = (String)tablaEmpleados.getValueAt(fila, 8);            
             String subordinado = (String)tablaEmpleados.getValueAt(fila, 9);            
             String categoria = (String)tablaEmpleados.getValueAt(fila, 10);            
@@ -518,24 +518,25 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             } else {
                 btnMujer.setSelected(true);
             }
-            //txtTel.setText(tel);
-            //txtDir.setText(dir);
-            //txtEmail.setText(mail);
+            
             txtSalario.setText(salario);
             if (subordinado.equals("SI")) { checkSubordinado.setSelected(true); 
-            } else { checkSubordinado.setSelected(false); }
-            if (categoria != null) { checkDirectivo.setSelected(true);
-            } else { checkDirectivo.setSelected(false); }            
-            txtCategoria.setText(categoria);
+            } else { checkSubordinado.setSelected(false); }            
+            if (categoria == null || categoria.equals("0")) { 
+                checkDirectivo.setSelected(false);
+                txtCategoria.setText("0");
+            } else { 
+                checkDirectivo.setSelected(true);
+                txtCategoria.setText(categoria);
+            }            
+            
         }
         
     }//GEN-LAST:event_tablaEmpleadosMouseClicked
 
     private void btnCancelar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar2ActionPerformed
-        limpiarCampos();
-        habilitarbotonesLimpiar();
-        obtenerListarEmpleados();
-        disenoTabla();
+            habilitarbotonesLimpiar();
+            limpiarCampos();
     }//GEN-LAST:event_btnCancelar2ActionPerformed
 
     private void btnGuardar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar2ActionPerformed
@@ -549,20 +550,20 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         String subor = " ";
         Integer categoria = 0;
 
-        if (txtCategoria.getText().isEmpty()){
-            categoria = Integer.parseInt(txtCategoria.getText());
-        }
         if (checkSubordinado.isSelected()) { subor = "SI"; }
         if (btnHombre.isSelected()) { genero = 'H'; }
         if (btnMujer.isSelected()) { genero = 'M'; }
 
         // Compara si todos los campos estan vacios
-        boolean comp1 = TID.equals("Seleccione...") || nombre.equals("") || apel.equals("");
+        boolean comp1 = TID.equals("Seleccione...") || nombre.equals("") || apel.equals("") || txtCategoria.getText().equals("");
         boolean comp2 = genero == ' ' || txtFechaNac.getDate() == null || txtSalario.getText().isEmpty();
-
+                            
         if (comp1 || comp2) {
             JOptionPane.showMessageDialog(null, "Faltan campos por diligenciar.");
         } else {
+            if (!txtCategoria.getText().equals("0")){
+                categoria = Integer.parseInt(txtCategoria.getText());
+            }
             //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
             sqlPackageDate = new java.sql.Date(txtFechaNac.getDate().getTime());
             /// Da formato a la fecha obtenida en la linea anterior
@@ -600,15 +601,12 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         String subor = " ";
         Integer categoria = 0;
 
-        if (txtCategoria.getText().isEmpty()){
-            categoria = Integer.parseInt(txtCategoria.getText());
-        }
         if (checkSubordinado.isSelected()) { subor = "SI"; }
         if (btnHombre.isSelected()) { genero = 'H'; }
         if (btnMujer.isSelected()) { genero = 'M'; }
 
         // Compara si todos los campos estan vacios
-        boolean comp1 = TID.equals("Seleccione...") || nombre.equals("") || apel.equals("");
+        boolean comp1 = TID.equals("Seleccione...") || nombre.equals("") || apel.equals("") || txtCategoria.getText().equals("");
         boolean comp2 = genero == ' ' || txtFechaNac.getDate() == null || txtSalario.getText().isEmpty();
 
         int fila = tablaEmpleados.getSelectedRow();
@@ -618,6 +616,9 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             if (comp1 || comp2) {
                 JOptionPane.showMessageDialog(null, "La información no registra ningún cambio.");
             } else {
+                 if (!txtCategoria.getText().equals("0")){
+                    categoria = Integer.parseInt(txtCategoria.getText());
+                }
                 //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
                 java.sql.Date sqlPackageDate = new java.sql.Date(txtFechaNac.getDate().getTime());
                 /// Da formato a la fecha obtenida en la linea anterior
@@ -655,7 +656,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             int op = JOptionPane.showConfirmDialog(null, "Esta seguro de eliminar "
                 + "el registro?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
             if (op == JOptionPane.YES_OPTION) {
-                boolean res = empresa.eliminarCliente(fila);
+                boolean res = empresa.eliminarEmpleado(fila);
                 if (res == true) {
                     JOptionPane.showMessageDialog(null, "Registro eliminado exitosamente.");
                     obtenerListarEmpleados();
@@ -704,10 +705,14 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             user[4] = String.valueOf(empresa.getEmpleados().get(i).getApellidos());
             user[5] = String.valueOf(empresa.getEmpleados().get(i).getFechaNacimiento());
             user[6] = String.valueOf(empresa.getEmpleados().get(i).getGenero());
-            //user[7] = String.valueOf(empleado.calcularEdad());
+            user[7] = String.valueOf(empleado.calcularEdad());
             user[8] = String.valueOf(empresa.getEmpleados().get(i).getSalario());
             user[9] = String.valueOf(empresa.getEmpleados().get(i).getSubordinado());
-            //user[10] = String.valueOf(directivo.getCategoria());
+            if (txtCategoria.getText().equals("") || txtCategoria.getText().equals("0")) {
+                
+            } else {
+                user[10] = String.valueOf(directivo.getCategoria());
+            }
             modelo.addRow(user);
         }
         tablaEmpleados.setModel(modelo);
@@ -774,6 +779,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         checkSubordinado.setSelected(false);
         checkDirectivo.setSelected(false);
         txtCategoria.setText("0");
+        txtCategoria.setEnabled(false);
     }
 
     //Método para diseñar las columnas de la tabla Empresa

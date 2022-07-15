@@ -14,16 +14,14 @@ package Model;
  */
 public class Directivo extends Empleado {
 
-    private Integer categoria = 0;    
+    private Integer categoria;    
 
     public Directivo(int id, String TID, String documento, 
             String nombre, String apellidos, String fechaNacimiento, char genero, 
             Double salario, String subordinado, Integer categoria) {
         super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, salario, subordinado);
         this.categoria = categoria;
-    }
-
-   
+    }   
     
     /**
      * @return the categoria
