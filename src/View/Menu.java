@@ -5,43 +5,28 @@
  */
 package View;
 
-import Model.*;
+
+import Controller.ControllerMenu;
+import Model.Empresa;
 
 /**
  *
- * @author Q-USER
+ * @author Jhonatan Grueso Perea
+ * @since 14/07/2022
+ * @version 1.2
  */
-public class JfrPrincipal extends javax.swing.JFrame {
-    
-    private Empresa empresa;
-    
-    
+public class Menu extends javax.swing.JFrame {
+ 
     /**
      * Creates new form JfrPrincipal
      */
-    public JfrPrincipal() {
-        
-        this.empresa = new Empresa("Harineras del Valle","90014802105", "3185548774",
-                "Kra 35 # 25 35","jhonper86@gmail.com","Producción de harinas");
-        
-        initComponents();
-        this.setExtendedState(JfrPrincipal.MAXIMIZED_BOTH);//Permite ejecutar el formulario principal Maximizado
-        this.setLocationRelativeTo(null);//Permite ubicar el formulario en el centro de la pantalla
-               
+    public Menu(Empresa empresa) {              
+        initComponents();   
+        ControllerMenu ctrlMenu = new ControllerMenu(this, empresa);  
+        this.setExtendedState(Menu.MAXIMIZED_BOTH);//Permite ejecutar el formulario principal Maximizado
+        this.setLocationRelativeTo(null);//Permite ubicar el formulario en el centro de la pantalla               
     }
 
-     public JfrPrincipal(Empresa empresa) {
-        this.empresa = new Empresa(empresa.getNombre(), empresa.getNIT(), 
-                empresa.getTelfono(), empresa.getDireccion(), empresa.getEmail(), 
-                empresa.getActEconomica());
-        initComponents();
-       
-        this.empresa = empresa;
-        
-        this.setExtendedState(JfrPrincipal.MAXIMIZED_BOTH);//Permite ejecutar el formulario principal Maximizado
-        this.setLocationRelativeTo(null);//Permite ubicar el formulario en el centro de la pantalla
-               
-    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -54,7 +39,7 @@ public class JfrPrincipal extends javax.swing.JFrame {
         escritorio = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuInicio = new javax.swing.JMenu();
-        menuFormulariioEmpleado = new javax.swing.JMenuItem();
+        menuFormularioEmpleado = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuFormularioCliente = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
@@ -85,47 +70,27 @@ public class JfrPrincipal extends javax.swing.JFrame {
         jMenuInicio.setText("   Inicio   ");
         jMenuInicio.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
 
-        menuFormulariioEmpleado.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        menuFormulariioEmpleado.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        menuFormulariioEmpleado.setText("Formulario empleado");
-        menuFormulariioEmpleado.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuFormulariioEmpleadoActionPerformed(evt);
-            }
-        });
-        jMenuInicio.add(menuFormulariioEmpleado);
+        menuFormularioEmpleado.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuFormularioEmpleado.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        menuFormularioEmpleado.setText("Formulario empleado");
+        jMenuInicio.add(menuFormularioEmpleado);
         jMenuInicio.add(jSeparator1);
 
         menuFormularioCliente.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuFormularioCliente.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         menuFormularioCliente.setText("Formulario cliente");
-        menuFormularioCliente.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuFormularioClienteActionPerformed(evt);
-            }
-        });
         jMenuInicio.add(menuFormularioCliente);
         jMenuInicio.add(jSeparator3);
 
         menuConsultasEmpresa.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuConsultasEmpresa.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         menuConsultasEmpresa.setText("Consultas");
-        menuConsultasEmpresa.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                menuConsultasEmpresaActionPerformed(evt);
-            }
-        });
         jMenuInicio.add(menuConsultasEmpresa);
         jMenuInicio.add(jSeparator4);
 
         jMenuSalir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         jMenuSalir.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         jMenuSalir.setText("Salir");
-        jMenuSalir.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuSalirActionPerformed(evt);
-            }
-        });
         jMenuInicio.add(jMenuSalir);
 
         jMenuBar1.add(jMenuInicio);
@@ -146,34 +111,6 @@ public class JfrPrincipal extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuSalirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuSalirActionPerformed
-        System.exit(0);//Permite salir de la aplicación
-    }//GEN-LAST:event_jMenuSalirActionPerformed
-
-    private void menuConsultasEmpresaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuConsultasEmpresaActionPerformed
-        this.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
-        this.escritorio.repaint();  // Permite limpiar la ventana principal              
-        InterConsulta ventana = new InterConsulta(empresa);
-        escritorio.add(ventana);
-        ventana.show(); 
-    }//GEN-LAST:event_menuConsultasEmpresaActionPerformed
-
-    private void menuFormulariioEmpleadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFormulariioEmpleadoActionPerformed
-        this.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
-        this.escritorio.repaint();  // Permite limpiar la ventana principal              
-        InterGestionEmpleados ventana = new InterGestionEmpleados(empresa);
-        escritorio.add(ventana);
-        ventana.show(); 
-    }//GEN-LAST:event_menuFormulariioEmpleadoActionPerformed
-
-    private void menuFormularioClienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuFormularioClienteActionPerformed
-        this.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
-        this.escritorio.repaint();  // Permite limpiar la ventana principal              
-        InterGestionClientes ventana = new InterGestionClientes(empresa);             
-        escritorio.add(ventana);
-        ventana.show(); 
-    }//GEN-LAST:event_menuFormularioClienteActionPerformed
-
     /**
      * @param args the command line arguments
      */
@@ -191,20 +128,24 @@ public class JfrPrincipal extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(JfrPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(JfrPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(JfrPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(JfrPrincipal.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Menu.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
         //</editor-fold>
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new JfrPrincipal().setVisible(true);
+            private Empresa empresa;
+            
+            @Override
+            public void run() {                
+                new Menu(empresa).setVisible(true);
             }
         });
     }
@@ -212,13 +153,13 @@ public class JfrPrincipal extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JDesktopPane escritorio;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenu jMenuInicio;
-    private javax.swing.JMenuItem jMenuSalir;
+    public javax.swing.JMenu jMenuInicio;
+    public javax.swing.JMenuItem jMenuSalir;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
-    private javax.swing.JMenuItem menuConsultasEmpresa;
-    private javax.swing.JMenuItem menuFormulariioEmpleado;
-    private javax.swing.JMenuItem menuFormularioCliente;
+    public javax.swing.JMenuItem menuConsultasEmpresa;
+    public javax.swing.JMenuItem menuFormularioCliente;
+    public javax.swing.JMenuItem menuFormularioEmpleado;
     // End of variables declaration//GEN-END:variables
 }

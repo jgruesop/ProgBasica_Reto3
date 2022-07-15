@@ -6,7 +6,7 @@
 package View;
 
 import Model.Empresa;
-import static View.JfrPrincipal.escritorio;
+import static View.Menu.escritorio;
 
 /**
  *
@@ -23,8 +23,8 @@ public class InterConsulta extends javax.swing.JInternalFrame {
         initComponents();
         
          //Permite centrar el JinternalFrame
-        int x = JfrPrincipal.escritorio.getWidth() - this.getWidth();
-        int y = JfrPrincipal.escritorio.getHeight() - this.getHeight();
+        int x = Menu.escritorio.getWidth() - this.getWidth();
+        int y = Menu.escritorio.getHeight() - this.getHeight();
         setLocation(x / 2, y / 2);
     }
     
@@ -34,8 +34,8 @@ public class InterConsulta extends javax.swing.JInternalFrame {
         this.empresa = empresa;
         
          //Permite centrar el JinternalFrame
-        int x = JfrPrincipal.escritorio.getWidth() - this.getWidth();
-        int y = JfrPrincipal.escritorio.getHeight() - this.getHeight();
+        int x = Menu.escritorio.getWidth() - this.getWidth();
+        int y = Menu.escritorio.getHeight() - this.getHeight();
         setLocation(x / 2, y / 2);
     }
 

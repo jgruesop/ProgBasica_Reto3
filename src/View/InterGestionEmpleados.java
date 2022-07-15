@@ -39,8 +39,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
     public InterGestionEmpleados(Empresa empresa) {
         initComponents();
 
-        inhabilitarbotones();
-        //inhabilitarCampos();
+        inhabilitarbotones();        
         txtCategoria.setText("0");
         txtCategoria.setEnabled(false);
         this.empresa = empresa;
@@ -48,8 +47,8 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         tablaEmpleados.getTableHeader().setReorderingAllowed(false);//Bloquea el movimiento de las columnas, e impide imvertir la información.
 
         //Permite centrar el JinternalFrame
-        int x = JfrPrincipal.escritorio.getWidth() - this.getWidth();
-        int y = JfrPrincipal.escritorio.getHeight() - this.getHeight();
+        int x = Menu.escritorio.getWidth() - this.getWidth();
+        int y = Menu.escritorio.getHeight() - this.getHeight();
         setLocation(x / 2, y / 2);
     }
 
@@ -489,7 +488,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             btnActualizar2.setEnabled(false);
             btnEliminar2.setEnabled(false);            
         } else {          
-            
+            inhabilitarCampos();
             habilitarbotones();            
             String TID = (String)tablaEmpleados.getValueAt(fila, 1);
             String doc = (String)tablaEmpleados.getValueAt(fila, 2);
@@ -536,6 +535,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
 
     private void btnCancelar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar2ActionPerformed
             habilitarbotonesLimpiar();
+            habilitarCampos();
             limpiarCampos();
     }//GEN-LAST:event_btnCancelar2ActionPerformed
 
@@ -591,7 +591,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_btnGuardar2ActionPerformed
 
     private void btnActualizar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizar2ActionPerformed
-
+        
         int id = 0;
         String nombre = txtNombre.getText().toUpperCase();
         String doc = txtDoc.getText();

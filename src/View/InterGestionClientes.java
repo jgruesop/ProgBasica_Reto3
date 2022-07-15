@@ -43,8 +43,8 @@ public class InterGestionClientes extends javax.swing.JInternalFrame {
         tablaClientes.getTableHeader().setReorderingAllowed(false);//Bloquea el movimiento de las columnas, e impide imvertir la información.
         
          //Permite centrar el JinternalFrame
-        int x = JfrPrincipal.escritorio.getWidth() - this.getWidth();
-        int y = JfrPrincipal.escritorio.getHeight() - this.getHeight();
+        int x = Menu.escritorio.getWidth() - this.getWidth();
+        int y = Menu.escritorio.getHeight() - this.getHeight();
         setLocation(x / 2, y / 2);
     }
 
