@@ -5,6 +5,7 @@
  */
 package View;
 
+import Controller.ControllerEmpleados;
 import Model.*;
 import java.awt.event.KeyEvent;
 import java.text.ParseException;
@@ -13,7 +14,7 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
+
 
 /**
  *
@@ -24,15 +25,6 @@ import javax.swing.table.DefaultTableModel;
  */
 public class InterGestionEmpleados extends javax.swing.JInternalFrame {
 
-    private Empresa empresa;
-    private Empleado empleado;
-    private Directivo directivo;
-    private java.sql.Date sqlPackageDate;
-    private SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-    private DefaultTableModel modelo;    //Modelo por defecto de la Tabla
-    private String fNac;
-    private boolean res = false;
-
     /**
      * Creates new form InterGestionEmpleados
      */
@@ -42,14 +34,17 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         inhabilitarbotones();        
         txtCategoria.setText("0");
         txtCategoria.setEnabled(false);
-        this.empresa = empresa;
+        
 
         tablaEmpleados.getTableHeader().setReorderingAllowed(false);//Bloquea el movimiento de las columnas, e impide imvertir la información.
-
+        
+        
         //Permite centrar el JinternalFrame
         int x = Menu.escritorio.getWidth() - this.getWidth();
         int y = Menu.escritorio.getHeight() - this.getHeight();
         setLocation(x / 2, y / 2);
+        
+        
     }
 
     /**
@@ -139,6 +134,11 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         txtDir.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
 
         txtDoc.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        txtDoc.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtDocKeyTyped(evt);
+            }
+        });
 
         jLabel6.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
         jLabel6.setText("Dirección");
@@ -340,39 +340,19 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         btnEliminar2.setBackground(new java.awt.Color(153, 102, 0));
         btnEliminar2.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         btnEliminar2.setText("Eliminar");
-        btnEliminar2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEliminar2ActionPerformed(evt);
-            }
-        });
 
         btnActualizar2.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         btnActualizar2.setText("Modificar");
-        btnActualizar2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnActualizar2ActionPerformed(evt);
-            }
-        });
 
         btnGuardar2.setBackground(new java.awt.Color(0, 153, 0));
         btnGuardar2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         btnGuardar2.setText("Enviar");
         btnGuardar2.setBorderPainted(false);
-        btnGuardar2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardar2ActionPerformed(evt);
-            }
-        });
 
         btnCancelar2.setBackground(new java.awt.Color(153, 0, 0));
         btnCancelar2.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         btnCancelar2.setText("Cancelar");
         btnCancelar2.setBorderPainted(false);
-        btnCancelar2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnCancelar2ActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
         jPanel7.setLayout(jPanel7Layout);
@@ -457,18 +437,6 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void checkDirectivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_checkDirectivoMouseClicked
-        
-        if (checkDirectivo.isSelected()) {
-            txtCategoria.setEnabled(true);
-            txtCategoria.setText("");
-        } else {
-            txtCategoria.setEnabled(false);            
-            txtCategoria.setText("0");
-        }
-
-    }//GEN-LAST:event_checkDirectivoMouseClicked
-
     private void txtSalarioKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtSalarioKeyTyped
         char car = evt.getKeyChar();
         //Permite validar que solo se ingresen datos numéricos.
@@ -481,7 +449,6 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
     }//GEN-LAST:event_txtSalarioKeyTyped
 
     private void tablaEmpleadosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaEmpleadosMouseClicked
-        
         int fila = tablaEmpleados.getSelectedRow();        
         if (fila == -1) {
             JOptionPane.showMessageDialog(null, "No se ha seleccionadao ningún registro de la tabla");
@@ -499,8 +466,8 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             String salario = (String)tablaEmpleados.getValueAt(fila, 8);            
             String subordinado = (String)tablaEmpleados.getValueAt(fila, 9);            
             String categoria = (String)tablaEmpleados.getValueAt(fila, 10);            
-            
-            
+
+
             boxTID.setSelectedItem(TID);
             txtDoc.setText(doc);
             txtNombre.setText(nom);       
@@ -517,7 +484,7 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             } else {
                 btnMujer.setSelected(true);
             }
-            
+
             txtSalario.setText(salario);
             if (subordinado.equals("SI")) { checkSubordinado.setSelected(true); 
             } else { checkSubordinado.setSelected(false); }            
@@ -527,207 +494,37 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
             } else { 
                 checkDirectivo.setSelected(true);
                 txtCategoria.setText(categoria);
-            }            
-            
+            }  
         }
-        
     }//GEN-LAST:event_tablaEmpleadosMouseClicked
 
-    private void btnCancelar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelar2ActionPerformed
-            habilitarbotonesLimpiar();
-            habilitarCampos();
-            limpiarCampos();
-    }//GEN-LAST:event_btnCancelar2ActionPerformed
-
-    private void btnGuardar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardar2ActionPerformed
-
-        int id = 0;
-        String nombre = txtNombre.getText().toUpperCase();
-        String doc = txtDoc.getText();
-        String apel = txtApellido.getText().toUpperCase();
-        String TID = boxTID.getSelectedItem().toString();        
-        char genero = ' ';
-        String subor = " ";
-        Integer categoria = 0;
-
-        if (checkSubordinado.isSelected()) { subor = "SI"; }
-        if (btnHombre.isSelected()) { genero = 'H'; }
-        if (btnMujer.isSelected()) { genero = 'M'; }
-
-        // Compara si todos los campos estan vacios
-        boolean comp1 = TID.equals("Seleccione...") || nombre.equals("") || apel.equals("") || txtCategoria.getText().equals("");
-        boolean comp2 = genero == ' ' || txtFechaNac.getDate() == null || txtSalario.getText().isEmpty();
-                            
-        if (comp1 || comp2) {
-            JOptionPane.showMessageDialog(null, "Faltan campos por diligenciar.");
+    private void checkDirectivoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_checkDirectivoMouseClicked
+        if (checkDirectivo.isSelected()) {
+            txtCategoria.setEnabled(true);
+            txtCategoria.setText("");
         } else {
-            if (!txtCategoria.getText().equals("0")){
-                categoria = Integer.parseInt(txtCategoria.getText());
-            }
-            //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
-            sqlPackageDate = new java.sql.Date(txtFechaNac.getDate().getTime());
-            /// Da formato a la fecha obtenida en la linea anterior
-            fNac = df.format(sqlPackageDate);
-            Double salario = Double.parseDouble(txtSalario.getText());
-            // Determina si la casilla directivo fue seleccionada            
-            if (checkDirectivo.isSelected()) {
-                directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero, salario, subor, categoria);
-                res = empresa.agregarEmpleado(directivo);
-            } else {
-                txtCategoria.setEnabled(false);
-                empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, salario, subor);
-                res = empresa.agregarEmpleado(empleado);
-            }
-
-            if (res == true) {
-                JOptionPane.showMessageDialog(null, "Datos almacenados exitosamente.");
-                obtenerListarEmpleados();
-                disenoTabla();
-                limpiarCampos();
-            } else {
-                JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
-            }
+            txtCategoria.setEnabled(false);            
+            txtCategoria.setText("0");
         }
-    }//GEN-LAST:event_btnGuardar2ActionPerformed
+    }//GEN-LAST:event_checkDirectivoMouseClicked
 
-    private void btnActualizar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizar2ActionPerformed
-        
-        int id = 0;
-        String nombre = txtNombre.getText().toUpperCase();
-        String doc = txtDoc.getText();
-        String apel = txtApellido.getText().toUpperCase();
-        String TID = boxTID.getSelectedItem().toString();        
-        char genero = ' ';
-        String subor = " ";
-        Integer categoria = 0;
-
-        if (checkSubordinado.isSelected()) { subor = "SI"; }
-        if (btnHombre.isSelected()) { genero = 'H'; }
-        if (btnMujer.isSelected()) { genero = 'M'; }
-
-        // Compara si todos los campos estan vacios
-        boolean comp1 = TID.equals("Seleccione...") || nombre.equals("") || apel.equals("") || txtCategoria.getText().equals("");
-        boolean comp2 = genero == ' ' || txtFechaNac.getDate() == null || txtSalario.getText().isEmpty();
-
-        int fila = tablaEmpleados.getSelectedRow();
-        if (fila == -1) {
-            JOptionPane.showMessageDialog(null, "Seleccionar el registro de la tabla");
-        } else {
-            if (comp1 || comp2) {
-                JOptionPane.showMessageDialog(null, "La información no registra ningún cambio.");
-            } else {
-                 if (!txtCategoria.getText().equals("0")){
-                    categoria = Integer.parseInt(txtCategoria.getText());
-                }
-                //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
-                java.sql.Date sqlPackageDate = new java.sql.Date(txtFechaNac.getDate().getTime());
-                /// Da formato a la fecha obtenida en la linea anterior
-                String fNac = df.format(sqlPackageDate);
-                Double salario = Double.parseDouble(txtSalario.getText());
-                // Determina si la casilla directivo fue seleccionada
-                if (checkDirectivo.isSelected()) {
-                    directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero, salario, subor, categoria);
-                    res = empresa.modificarEmpleado(fila, empleado);
-                } else {
-                    empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, salario, subor);
-                    res = empresa.modificarEmpleado(fila, empleado);
-                }
-                if (res == true) {
-                    JOptionPane.showMessageDialog(null, "Datos Actualizados exitosamente.");
-                    obtenerListarEmpleados();
-                    disenoTabla();
-                    limpiarCampos();
-                    inhabilitarCampos();
-                    habilitarbotones();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
-                }
-            }
+    private void txtDocKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDocKeyTyped
+        char car = evt.getKeyChar();
+        //Permite validar que solo se ingresen datos numéricos.
+        if((car < '0' || car > '9') && (car != (char)KeyEvent.VK_DELETE)){
+            evt.consume();
         }
-    }//GEN-LAST:event_btnActualizar2ActionPerformed
-
-    private void btnEliminar2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEliminar2ActionPerformed
-
-        inhabilitarCampos();
-        int fila = tablaEmpleados.getSelectedRow();
-        if (fila == -1) {
-            JOptionPane.showMessageDialog(null, "Seleccionar el registro de la tabla");
-        } else {           
-            int op = JOptionPane.showConfirmDialog(null, "Esta seguro de eliminar "
-                + "el registro?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
-            if (op == JOptionPane.YES_OPTION) {
-                boolean res = empresa.eliminarEmpleado(fila);
-                if (res == true) {
-                    JOptionPane.showMessageDialog(null, "Registro eliminado exitosamente.");
-                    obtenerListarEmpleados();
-                    limpiarCampos();
-                    habilitarCampos();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
-                }
-            }
-            obtenerListarEmpleados();
-            disenoTabla();
-            limpiarCampos();
-            inhabilitarbotones();
-            habilitarCampos();
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {            
+            txtSalario.requestFocus();
         }
-    }//GEN-LAST:event_btnEliminar2ActionPerformed
+    }//GEN-LAST:event_txtDocKeyTyped
 
-    /**
-     * *
-     * Metodo para listar los clientes en la tabla
-     */
-    public void obtenerListarEmpleados() {
-
-        modelo = new DefaultTableModel();
-        modelo.addColumn("Id");
-        modelo.addColumn("Tid");
-        modelo.addColumn("Documento");
-        modelo.addColumn("Nombres");
-        modelo.addColumn("Apellidos");
-        modelo.addColumn("Fecha Nacimiento");
-        modelo.addColumn("Genero");
-        modelo.addColumn("Edad");
-        modelo.addColumn("Salario Neto");
-        modelo.addColumn("Directivo");
-        modelo.addColumn("Subordinado");
-        modelo.addColumn("Categoria");
-
-        String[] user = new String[12];
-
-        for (int i = 0; i < empresa.getEmpleados().size(); i++) {
-
-            user[0] = String.valueOf(empresa.getEmpleados().get(i).getId());
-            user[1] = String.valueOf(empresa.getEmpleados().get(i).getTID());
-            user[2] = String.valueOf(empresa.getEmpleados().get(i).getDocumento());
-            user[3] = String.valueOf(empresa.getEmpleados().get(i).getNombre());
-            user[4] = String.valueOf(empresa.getEmpleados().get(i).getApellidos());
-            user[5] = String.valueOf(empresa.getEmpleados().get(i).getFechaNacimiento());
-            user[6] = String.valueOf(empresa.getEmpleados().get(i).getGenero());
-            user[7] = String.valueOf(empleado.calcularEdad());
-            user[8] = String.valueOf(empresa.getEmpleados().get(i).getSalario());
-            user[9] = String.valueOf(empresa.getEmpleados().get(i).getSubordinado());
-            if (txtCategoria.getText().equals("") || txtCategoria.getText().equals("0")) {
-                
-            } else {
-                user[10] = String.valueOf(directivo.getCategoria());
-            }
-            modelo.addRow(user);
-        }
-        tablaEmpleados.setModel(modelo);
+    public void inhabilitarbotones() {
+        btnGuardar2.setEnabled(true);
+        btnActualizar2.setEnabled(false);
+        btnEliminar2.setEnabled(false);
     }
-
-    public void habilitarCampos() {
-        boxTID.setEnabled(true);
-        txtDoc.setEnabled(true);
-        txtNombre.setEnabled(true);
-        txtApellido.setEnabled(true);
-        txtFechaNac.setEnabled(true);
-        btnHombre.setEnabled(true);
-        btnMujer.setEnabled(true);
-    }
-
+    
     public void inhabilitarCampos() {
         boxTID.setEnabled(false);
         txtDoc.setEnabled(false);
@@ -741,106 +538,23 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
         txtEmail.setEnabled(false);
         txtCategoria.setEnabled(false);
     }
-
-    public void inhabilitarbotones() {
-        btnGuardar2.setEnabled(true);
-        btnActualizar2.setEnabled(false);
-        btnEliminar2.setEnabled(false);
-    }
-
-    public void habilitarbotonesLimpiar() {
-        obtenerListarEmpleados();
-        disenoTabla();
-        btnGuardar2.setEnabled(true);
-        btnActualizar2.setEnabled(false);
-        btnEliminar2.setEnabled(false);
-    }
-
-    public void habilitarbotones() {
+    
+     public void habilitarbotones() {
         btnGuardar2.setEnabled(false);
         btnActualizar2.setEnabled(true);
         btnEliminar2.setEnabled(true);
     }
 
-    /**
-     * Metodo para limpiar pantalla
-     */
-    public void limpiarCampos() {
-        txtDoc.setText("");
-        txtNombre.setText("");
-        txtApellido.setText("");
-        boxTID.setSelectedItem("Seleccione...");
-        txtTel.setText("");
-        txtDir.setText("");
-        txtEmail.setText("");
-        txtFechaNac.setDate(null);
-        radioGenero.clearSelection();
-        txtSalario.setText("");
-        checkSubordinado.setSelected(false);
-        checkDirectivo.setSelected(false);
-        txtCategoria.setText("0");
-        txtCategoria.setEnabled(false);
-    }
-
-    //Método para diseñar las columnas de la tabla Empresa
-    void disenoTabla() {
-        //Redimensionar el tamaño de las columnas de la tabla.        
-        tablaEmpleados.getColumnModel().getColumn(0).setMaxWidth(0);
-        tablaEmpleados.getColumnModel().getColumn(0).setMinWidth(0);
-        tablaEmpleados.getColumnModel().getColumn(0).setPreferredWidth(0);
-        //.
-        tablaEmpleados.getColumnModel().getColumn(1).setMaxWidth(30);
-        tablaEmpleados.getColumnModel().getColumn(1).setMinWidth(30);
-        tablaEmpleados.getColumnModel().getColumn(1).setPreferredWidth(30);
-        //.
-        tablaEmpleados.getColumnModel().getColumn(2).setMaxWidth(120);
-        tablaEmpleados.getColumnModel().getColumn(2).setMinWidth(120);
-        tablaEmpleados.getColumnModel().getColumn(2).setPreferredWidth(120);
-        //.De este modo se oculta la columna 
-        tablaEmpleados.getColumnModel().getColumn(3).setMaxWidth(155);
-        tablaEmpleados.getColumnModel().getColumn(3).setMinWidth(155);
-        tablaEmpleados.getColumnModel().getColumn(3).setPreferredWidth(155);
-        //De este modo se oculta la columna 
-        tablaEmpleados.getColumnModel().getColumn(4).setMaxWidth(155);
-        tablaEmpleados.getColumnModel().getColumn(4).setMinWidth(155);
-        tablaEmpleados.getColumnModel().getColumn(4).setPreferredWidth(155);
-        //De este modo se oculta la columna 
-        tablaEmpleados.getColumnModel().getColumn(5).setMaxWidth(120);
-        tablaEmpleados.getColumnModel().getColumn(5).setMinWidth(120);
-        tablaEmpleados.getColumnModel().getColumn(5).setPreferredWidth(120);
-        //De este modo se oculta la columna 
-        tablaEmpleados.getColumnModel().getColumn(6).setMaxWidth(60);
-        tablaEmpleados.getColumnModel().getColumn(6).setMinWidth(60);
-        tablaEmpleados.getColumnModel().getColumn(6).setPreferredWidth(60);
-        //De este modo se oculta la columna 
-        tablaEmpleados.getColumnModel().getColumn(7).setMaxWidth(50);
-        tablaEmpleados.getColumnModel().getColumn(7).setMinWidth(50);
-        tablaEmpleados.getColumnModel().getColumn(7).setPreferredWidth(50);
-        //De este modo se oculta la columna 
-        tablaEmpleados.getColumnModel().getColumn(8).setMaxWidth(130);
-        tablaEmpleados.getColumnModel().getColumn(8).setMinWidth(130);
-        tablaEmpleados.getColumnModel().getColumn(8).setPreferredWidth(130);
-        //De este modo se oculta la columna 
-        tablaEmpleados.getColumnModel().getColumn(9).setMaxWidth(0);
-        tablaEmpleados.getColumnModel().getColumn(9).setMinWidth(0);
-        tablaEmpleados.getColumnModel().getColumn(9).setPreferredWidth(0);
-        //De este modo se oculta la columna 
-        tablaEmpleados.getColumnModel().getColumn(9).setMaxWidth(0);
-        tablaEmpleados.getColumnModel().getColumn(9).setMinWidth(0);
-        tablaEmpleados.getColumnModel().getColumn(9).setPreferredWidth(0);
-
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JComboBox<String> boxTID;
-    private javax.swing.JButton btnActualizar2;
-    private javax.swing.JButton btnCancelar2;
-    private javax.swing.JButton btnEliminar2;
-    private javax.swing.JButton btnGuardar2;
-    private javax.swing.JRadioButton btnHombre;
-    private javax.swing.JRadioButton btnMujer;
-    private javax.swing.JCheckBox checkDirectivo;
-    private javax.swing.JCheckBox checkSubordinado;
+    public javax.swing.JComboBox<String> boxTID;
+    public javax.swing.JButton btnActualizar2;
+    public javax.swing.JButton btnCancelar2;
+    public javax.swing.JButton btnEliminar2;
+    public javax.swing.JButton btnGuardar2;
+    public javax.swing.JRadioButton btnHombre;
+    public javax.swing.JRadioButton btnMujer;
+    public javax.swing.JCheckBox checkDirectivo;
+    public javax.swing.JCheckBox checkSubordinado;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -860,15 +574,15 @@ public class InterGestionEmpleados extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     public javax.swing.ButtonGroup radioGenero;
-    private javax.swing.JTable tablaEmpleados;
-    private javax.swing.JTextField txtApellido;
-    private javax.swing.JTextField txtCategoria;
-    private javax.swing.JTextField txtDir;
-    private javax.swing.JTextField txtDoc;
-    private javax.swing.JTextField txtEmail;
-    private com.toedter.calendar.JDateChooser txtFechaNac;
-    private javax.swing.JTextField txtNombre;
-    private javax.swing.JTextField txtSalario;
-    private javax.swing.JTextField txtTel;
+    public javax.swing.JTable tablaEmpleados;
+    public javax.swing.JTextField txtApellido;
+    public javax.swing.JTextField txtCategoria;
+    public javax.swing.JTextField txtDir;
+    public javax.swing.JTextField txtDoc;
+    public javax.swing.JTextField txtEmail;
+    public com.toedter.calendar.JDateChooser txtFechaNac;
+    public javax.swing.JTextField txtNombre;
+    public javax.swing.JTextField txtSalario;
+    public javax.swing.JTextField txtTel;
     // End of variables declaration//GEN-END:variables
 }

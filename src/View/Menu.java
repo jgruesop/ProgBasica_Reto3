@@ -6,8 +6,8 @@
 package View;
 
 
-import Controller.ControllerMenu;
-import Model.Empresa;
+import Controller.*;
+import Model.*;
 
 /**
  *
@@ -22,7 +22,7 @@ public class Menu extends javax.swing.JFrame {
      */
     public Menu(Empresa empresa) {              
         initComponents();   
-        ControllerMenu ctrlMenu = new ControllerMenu(this, empresa);  
+        ControllerMenu ctrlMenu = new ControllerMenu(this, empresa);          
         this.setExtendedState(Menu.MAXIMIZED_BOTH);//Permite ejecutar el formulario principal Maximizado
         this.setLocationRelativeTo(null);//Permite ubicar el formulario en el centro de la pantalla               
     }
@@ -48,7 +48,7 @@ public class Menu extends javax.swing.JFrame {
         jMenuSalir = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Principal");
+        setTitle("Menú Principal");
 
         escritorio.setBackground(new java.awt.Color(0, 102, 153));
 

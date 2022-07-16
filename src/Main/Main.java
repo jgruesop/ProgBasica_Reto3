@@ -5,9 +5,9 @@
  */
 package Main;
 
-import Controller.ControllerMenu;
-import Model.*;
-import View.*;
+//import Controller.*;
+//import Model.*;
+//import View.*;
 
 /**
  *
@@ -33,12 +33,13 @@ public class Main {
          * código de las vistas.
         */
         
-       Empresa empresa = new Empresa("Harineras del Valle","90014802105", "3185548774",
-                "Kra 35 # 25 35","jhonper86@gmail.com","Producción de harinas");
-       Menu menu = new Menu(empresa);       
-       menu.setTitle("Menu Principal");
-       menu.setLocationRelativeTo(null);
-       menu.setVisible(true);       
+//       Empresa empresa = new Empresa("Harineras del Valle","90014802105", "3185548774",
+//                "Kra 35 # 25 35","jhonper86@gmail.com","Producción de harinas");
+//       Menu menu = new Menu(empresa);       
+//       menu.setTitle("Menu Principal");
+//       menu.setLocationRelativeTo(null);
+//       menu.setVisible(true);      
+//       ControllerEmpleados ctrlEmpleado = new ControllerEmpleados(empresa, empleado, directivo, vista);
 //       ControllerMenu ctrlMenu = new ControllerMenu(menu, empresa);
         
     }
