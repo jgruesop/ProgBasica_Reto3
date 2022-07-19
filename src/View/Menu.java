@@ -17,15 +17,19 @@ import Model.*;
  */
 public class Menu extends javax.swing.JFrame {
  
+    
     /**
      * Creates new form JfrPrincipal
      */
     public Menu(Empresa empresa) {              
         initComponents();   
+        
+        
         ControllerMenu ctrlMenu = new ControllerMenu(this, empresa);          
         this.setExtendedState(Menu.MAXIMIZED_BOTH);//Permite ejecutar el formulario principal Maximizado
         this.setLocationRelativeTo(null);//Permite ubicar el formulario en el centro de la pantalla               
-    }
+    }   
+   
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -45,6 +49,8 @@ public class Menu extends javax.swing.JFrame {
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         menuConsultasEmpresa = new javax.swing.JMenuItem();
         jSeparator4 = new javax.swing.JPopupMenu.Separator();
+        menuConfigUsuario = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
         jMenuSalir = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -88,7 +94,13 @@ public class Menu extends javax.swing.JFrame {
         jMenuInicio.add(menuConsultasEmpresa);
         jMenuInicio.add(jSeparator4);
 
-        jMenuSalir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
+        menuConfigUsuario.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
+        menuConfigUsuario.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        menuConfigUsuario.setText("Configración usuario");
+        jMenuInicio.add(menuConfigUsuario);
+        jMenuInicio.add(jSeparator2);
+
+        jMenuSalir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuSalir.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         jMenuSalir.setText("Salir");
         jMenuInicio.add(jMenuSalir);
@@ -144,8 +156,8 @@ public class Menu extends javax.swing.JFrame {
             private Empresa empresa;
             
             @Override
-            public void run() {                
-                new Menu(empresa).setVisible(true);
+            public void run() {                    
+                new Menu(empresa).setVisible(true);                 
             }
         });
     }
@@ -156,10 +168,15 @@ public class Menu extends javax.swing.JFrame {
     public javax.swing.JMenu jMenuInicio;
     public javax.swing.JMenuItem jMenuSalir;
     private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
+    public javax.swing.JMenuItem menuConfigUsuario;
     public javax.swing.JMenuItem menuConsultasEmpresa;
     public javax.swing.JMenuItem menuFormularioCliente;
     public javax.swing.JMenuItem menuFormularioEmpleado;
     // End of variables declaration//GEN-END:variables
+   
+
+    
 }

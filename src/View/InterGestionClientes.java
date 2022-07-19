@@ -5,18 +5,13 @@
  */
 package View;
 
+import Controller.ControllerClientes;
 import Model.*;
 import java.awt.event.KeyEvent;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 
 /**
  *
- * @author Q-USER
+ * @author JHONATAN GRUESO PEREA
  */
 public class InterGestionClientes extends javax.swing.JInternalFrame {
     
@@ -31,11 +26,6 @@ public class InterGestionClientes extends javax.swing.JInternalFrame {
     
      public InterGestionClientes(Empresa empresa) {
         initComponents();
-        
-        
-        inhabilitarbotones();
-        
-        tablaClientes.getTableHeader().setReorderingAllowed(false);//Bloquea el movimiento de las columnas, e impide imvertir la información.
         
          //Permite centrar el JinternalFrame
         int x = Menu.escritorio.getWidth() - this.getWidth();
@@ -84,6 +74,8 @@ public class InterGestionClientes extends javax.swing.JInternalFrame {
         btnActualizar = new javax.swing.JButton();
         btnGuardar = new javax.swing.JButton();
         btnCancelar = new javax.swing.JButton();
+
+        setClosable(true);
 
         jLabel7.setFont(new java.awt.Font("Dialog", 1, 24)); // NOI18N
         jLabel7.setText("Gestión clientes");
@@ -376,45 +368,8 @@ public class InterGestionClientes extends javax.swing.JInternalFrame {
 
     private void tablaClientesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaClientesMouseClicked
         
-        int fila = tablaClientes.getSelectedRow();        
-        if (fila == -1) {
-            JOptionPane.showMessageDialog(null, "No se ha seleccionadao ningún registro de la tabla");
-            btnActualizar.setEnabled(false);
-            btnEliminar.setEnabled(false);            
-        } else {          
-            habilitarbotones();
-            String TID = (String)tablaClientes.getValueAt(fila, 1);
-            String doc = (String)tablaClientes.getValueAt(fila, 2);
-            String nom = (String)tablaClientes.getValueAt(fila, 3);
-            String apel = (String)tablaClientes.getValueAt(fila, 4);            
-            String fNac = (String) tablaClientes.getValueAt(fila, 5);            
-            String genero = (String)tablaClientes.getValueAt(fila, 6);
-            String tel =  (String)tablaClientes.getValueAt(fila, 8);            
-            String mail = (String)tablaClientes.getValueAt(fila, 9);
-            String dir = (String)tablaClientes.getValueAt(fila, 10);            
-            
-            
-            boxTID.setSelectedItem(TID);
-            txtDoc.setText(doc);
-            txtNombre.setText(nom);       
-            txtApellido.setText(apel); 
-            Date date = null;
-            try {
-                date = new SimpleDateFormat("yyyy-mm-dd").parse(fNac);
-            } catch (ParseException ex) {
-                Logger.getLogger(InterGestionClientes.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            txtFechaNac.setDate(date);
-            if ("H".equals(genero)) {
-                btnHombre.setSelected(true);
-            } else {
-                btnMujer.setSelected(true);
-            }
-            txtTel.setText(tel);
-            txtDir.setText(dir);
-            txtEmail.setText(mail);
-        }
-        
+        ControllerClientes.obtenerDatosTabla();       
+                
     }//GEN-LAST:event_tablaClientesMouseClicked
 
     private void txtDocKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtDocKeyTyped
@@ -428,39 +383,15 @@ public class InterGestionClientes extends javax.swing.JInternalFrame {
         }
     }//GEN-LAST:event_txtDocKeyTyped
     
-    public void habilitarbotones() {        
-        btnGuardar.setEnabled(false);
-        btnActualizar.setEnabled(true);
-        btnEliminar.setEnabled(true);        
-    }
-    
-     public void inhabilitarbotones() {
-        btnGuardar.setEnabled(true);
-        btnActualizar.setEnabled(false);
-        btnEliminar.setEnabled(false);        
-    }
-
-    public void inhabilitarCampos() {
-        boxTID.setEnabled(false);
-        txtDoc.setEnabled(false);
-        txtNombre.setEnabled(false);       
-        txtApellido.setEnabled(false); 
-        txtFechaNac.setEnabled(false);
-        btnHombre.setEnabled(false);
-        btnMujer.setEnabled(false);
-        txtTel.setEnabled(false);
-        txtDir.setEnabled(false);
-        txtEmail.setEnabled(false);
-    }
    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    public javax.swing.JComboBox<String> boxTID;
-    public javax.swing.JButton btnActualizar;
-    public javax.swing.JButton btnCancelar;
-    public javax.swing.JButton btnEliminar;
-    public javax.swing.JButton btnGuardar;
-    public javax.swing.JRadioButton btnHombre;
-    public javax.swing.JRadioButton btnMujer;
+    public static javax.swing.JComboBox<String> boxTID;
+    public static javax.swing.JButton btnActualizar;
+    public static javax.swing.JButton btnCancelar;
+    public static javax.swing.JButton btnEliminar;
+    public static javax.swing.JButton btnGuardar;
+    public static javax.swing.JRadioButton btnHombre;
+    public static javax.swing.JRadioButton btnMujer;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -478,13 +409,13 @@ public class InterGestionClientes extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     public javax.swing.ButtonGroup radioGenero;
-    public javax.swing.JTable tablaClientes;
-    public javax.swing.JTextField txtApellido;
-    public javax.swing.JTextField txtDir;
-    public javax.swing.JTextField txtDoc;
-    public javax.swing.JTextField txtEmail;
-    public com.toedter.calendar.JDateChooser txtFechaNac;
-    public javax.swing.JTextField txtNombre;
-    public javax.swing.JTextField txtTel;
+    public static javax.swing.JTable tablaClientes;
+    public static javax.swing.JTextField txtApellido;
+    public static javax.swing.JTextField txtDir;
+    public static javax.swing.JTextField txtDoc;
+    public static javax.swing.JTextField txtEmail;
+    public static com.toedter.calendar.JDateChooser txtFechaNac;
+    public static javax.swing.JTextField txtNombre;
+    public static javax.swing.JTextField txtTel;
     // End of variables declaration//GEN-END:variables
 }

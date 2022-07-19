@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.Date;
+
 /**
  *
  * @author Jhonatan Grueso Perea
@@ -15,9 +17,9 @@ public class Empleado extends Persona {
     //Contructor
 
     public Empleado( int id, String TID, String documento, 
-            String nombre, String apellidos, String fechaNacimiento, char genero,
+            String nombre, String apellidos, Date fechaNacimiento, String genero, int edad,
             Double salario, String subordinado ) {
-        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero);
+        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);
         this.salario = salario;
         this.subordinado = subordinado;        
     }

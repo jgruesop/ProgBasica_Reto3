@@ -6,8 +6,7 @@
 package Model;
 
 
-import java.time.LocalDate;
-import java.time.Period;
+import java.util.Date;
 
 /**
  *
@@ -23,20 +22,22 @@ public class Persona {
     private String documento;
     private String nombre;
     private String apellidos;
-    private String fechaNacimiento;    
-    private char genero;          
+    private Date fechaNacimiento;    
+    private String genero;  
+    public int edad;
 
     //Constructor
     public Persona(int id, String TID, String documento, String nombre, String apellidos,
-            String fechaNacimiento, char genero ) {
+            Date fechaNacimiento, String genero, int edad ) {
         this.id = id;
         this.TID = TID;     
         this.documento = documento;
         this.nombre = nombre;
         this.apellidos = apellidos;
         this.fechaNacimiento = fechaNacimiento;        
-        this.genero = genero;        
-    }
+        this.genero = genero;      
+        this.edad = edad;
+    }  
    
 
     //Modificadores ***************
@@ -71,14 +72,14 @@ public class Persona {
     /**
      * @return the fechaNacimiento
      */
-    public String getFechaNacimiento() {
+    public Date getFechaNacimiento() {
         return fechaNacimiento;
     }
 
     /**
      * @param fechaNacimiento the fechaNacimiento to set
      */
-    public void setFechaNacimiento(String fechaNacimiento) {
+    public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
     
@@ -99,14 +100,14 @@ public class Persona {
     /**
      * @return the genero
      */
-    public char getGenero() {
+    public String getGenero() {
         return genero;
     }
 
     /**
      * @param genero the genero to set
      */
-    public void setGenero(char genero) {
+    public void setGenero(String genero) {
         this.genero = genero;
     }
 
@@ -138,20 +139,36 @@ public class Persona {
     public void setId(int id) {
         this.id = id;
     }
+    
+    public int getEdad() {
+        return edad;
+    }
 
-    //Metodos *********************
     /**
-     * Calcuala da edad del cliente y empleado
-     *
-     * @return int = edad
+     * @param edad the edad to set
      */
-    public int calcularEdad() {
-        LocalDate hoy = LocalDate.now();          
-        return Period.between(getFechaNacimientoFormateada(), hoy).getYears();
+    public void setEdad(int edad) {
+        this.edad = edad;
     }
 
-    private LocalDate getFechaNacimientoFormateada() {
-        return LocalDate.parse(getFechaNacimiento());
-    }
+//    //Metodos *********************
+//    /**
+//     * Calcuala da edad del cliente y empleado
+//     *
+//     * @return int = edad
+//     */
+//    public int calcularEdad() {
+//        LocalDate hoy = LocalDate.now();          
+//        return Period.between(getFechaNacimientoFormateada(), hoy).getYears();
+//    }
+//
+//    private LocalDate getFechaNacimientoFormateada() {
+//        return LocalDate.parse(String.valueOf(getFechaNacimiento()));
+//    }
+
+    /**
+     * @return the edad
+     */
+    
 
 }

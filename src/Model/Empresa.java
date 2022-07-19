@@ -4,6 +4,9 @@
  * and open the template in the editor.
  */
 package Model;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 /**
@@ -173,6 +176,40 @@ public class Empresa {
     //Metodos ***********************************
     
     /**
+     * Metodo para listar cliestes desde la BD
+     * @return 
+     */
+    public ArrayList<Cliente> obtenerClientes() {
+        
+        ArrayList<Cliente> listarClientes = new ArrayList<>();
+        
+        try {
+            PreparedStatement query = ConexionBD.obtener().prepareStatement(""
+                    + "SELECT "
+                    + "c.id_cliente, p.tid, p.documento, p.nombres, p.apellidos, "
+                    + "p.fechaNac, p.genero, TIMESTAMPDIFF(YEAR, p.fechaNac, CURRENT_DATE()) AS edad, "
+                    + "c.telefono, c.direccion, c.email "
+                    + " FROM cliente c "
+                    + " INNER JOIN persona p ON p.id_persona = c.id_cliente");
+            ResultSet res = query.executeQuery();            
+            
+            while (res.next()){                
+                
+                listarClientes.add(new Cliente(res.getInt("id_cliente"), res.getString("tid"), 
+                        res.getString("documento"), res.getString("nombres"), res.getString("apellidos"), 
+                        res.getDate("fechaNac"), res.getString("genero"), res.getInt("edad"), res.getString("telefono"), 
+                        res.getString("email"),res.getString("direccion")));
+                
+            }                        
+            
+        } catch(SQLException e){
+            System.out.println(e.getMessage());
+        }
+        
+        return listarClientes;
+    }
+    
+    /**
      * 
      * @param cliente
      * @return true or false
@@ -194,11 +231,14 @@ public class Empresa {
      * @return true or false
      * Metodo que permite eliminar un clientes a la lista
      */
-    public boolean eliminarCliente(int indiceCliente) {
+    public boolean eliminarCliente(String indiceCliente) {
         try {
-            clientes.remove(indiceCliente);
+            PreparedStatement query = ConexionBD.obtener().prepareStatement(""
+                    + "DELETE FROM cliente WHERE id_cliente = ?;");
+            query.setInt(1, Integer.parseInt(indiceCliente));
+            boolean  res = query.execute();
             return true;
-        } catch (Exception e) {
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
         }

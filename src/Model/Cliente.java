@@ -5,8 +5,9 @@
  */
 package Model;
 
-import java.time.LocalDate;
+
 import java.util.Date;
+
 
 /**
  *
@@ -19,26 +20,29 @@ public class Cliente extends Persona {
     private String telefono;
     private String email;
     private String direccion;
+    
 
-    public Cliente( int id, 
-            String TID, String documento, String nombre, String apellidos, 
-            String fechaNacimiento, char genero, String telefono, String direccion, String email) {
-        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero);
+    public Cliente( int id, String TID, String documento, String nombre, String apellidos, 
+            Date fechaNacimiento, String genero, int edad, String telefono, String direccion, String email) {
+        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);
         this.telefono = telefono;
         this.email = email;
-        this.direccion = direccion;
+        this.direccion = direccion;        
     }
 
     public Cliente( int id, String TID, String documento, String nombre, 
-            String apellidos, String fechaNacimiento, char genero, String telefono, String direccion) {
-        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero);
+            String apellidos, Date fechaNacimiento, String genero, int edad, String telefono, String direccion) {
+        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);
         this.telefono = telefono;
         this.direccion = direccion;
+        this.edad = edad;
     }
 
-    public Cliente(int id, String TID, String documento, String nombre, String apellidos, String fechaNacimiento, char genero) {
-        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero);
-    }    
+    public Cliente(int id, String TID, String documento, String nombre, String apellidos, Date fechaNacimiento, String genero, int edad) {
+        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);
+    }   
+
+   
     
     /**
      * @return the telefono
@@ -80,5 +84,6 @@ public class Cliente extends Persona {
      */
     public void setDireccion(String direccion) {
         this.direccion = direccion;
-    }
+    } 
+    
 }

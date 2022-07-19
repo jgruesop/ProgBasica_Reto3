@@ -25,8 +25,6 @@ public class ControllerMenu implements ActionListener{
     
     private Directivo directivo;
     
-    private Cliente cliente;
-    
     
 
     public ControllerMenu(Menu vista, Empresa empresa) {
@@ -37,6 +35,7 @@ public class ControllerMenu implements ActionListener{
         vista.menuFormularioEmpleado.addActionListener(this);
         vista.menuFormularioCliente.addActionListener(this);
         vista.menuConsultasEmpresa.addActionListener(this);
+        vista.menuConfigUsuario.addActionListener(this);
         vista.jMenuSalir.addActionListener(this);
     }
     
@@ -58,7 +57,7 @@ public class ControllerMenu implements ActionListener{
             vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
             vista.escritorio.repaint();  // Permite limpiar la ventana principal          
             InterGestionClientes ventana = new InterGestionClientes(empresa);   
-            ControllerClientes ctrlCliente = new ControllerClientes(empresa, cliente, ventana);
+            ControllerClientes ctrlCliente = new ControllerClientes(empresa, ventana);
             vista.escritorio.add(ventana);
             ventana.show(); 
         }
@@ -67,6 +66,14 @@ public class ControllerMenu implements ActionListener{
             vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
             vista.escritorio.repaint();  // Permite limpiar la ventana principal             
             InterConsulta ventana = new InterConsulta(empresa);
+            vista.escritorio.add(ventana);
+            ventana.show(); 
+        }
+        
+        if (evt.getSource() == vista.menuConfigUsuario) {
+            vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
+            vista.escritorio.repaint();  // Permite limpiar la ventana principal             
+            InterUsuario ventana = new InterUsuario(empresa);
             vista.escritorio.add(ventana);
             ventana.show(); 
         }

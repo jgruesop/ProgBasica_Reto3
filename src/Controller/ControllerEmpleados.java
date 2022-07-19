@@ -10,6 +10,7 @@ import View.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -25,7 +26,6 @@ public class ControllerEmpleados implements ActionListener {
     private java.sql.Date sqlPackageDate;
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     private DefaultTableModel modelo;    //Modelo por defecto de la Tabla
-    private String fNac;
     private boolean res = false;
     private InterGestionEmpleados vista;
     
@@ -49,17 +49,17 @@ public class ControllerEmpleados implements ActionListener {
             String doc = vista.txtDoc.getText();
             String apel = vista.txtApellido.getText().toUpperCase();
             String TID = vista.boxTID.getSelectedItem().toString();        
-            char genero = ' ';
+            String genero = "";
             String subor = " ";
             Integer categoria = 0;
-
+            int edad = 0;
             if (vista.checkSubordinado.isSelected()) { subor = "SI"; }
-            if (vista.btnHombre.isSelected()) { genero = 'H'; }
-            if (vista.btnMujer.isSelected()) { genero = 'M'; }
+            if (vista.btnHombre.isSelected()) { genero = "H"; }
+            if (vista.btnMujer.isSelected()) { genero = "M"; }
 
             // Compara si todos los campos estan vacios
             boolean comp1 = TID.equals("Seleccione...") || nombre.equals("") || apel.equals("") || vista.txtCategoria.getText().equals("");
-            boolean comp2 = genero == ' ' || vista.txtFechaNac.getDate() == null || vista.txtSalario.getText().isEmpty();
+            boolean comp2 = genero.equals("") || vista.txtFechaNac.getDate() == null || vista.txtSalario.getText().isEmpty();
 
             if (comp1 || comp2) {
                 JOptionPane.showMessageDialog(null, "Faltan campos por diligenciar.");
@@ -70,15 +70,15 @@ public class ControllerEmpleados implements ActionListener {
                 //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
                 sqlPackageDate = new java.sql.Date(vista.txtFechaNac.getDate().getTime());
                 /// Da formato a la fecha obtenida en la linea anterior
-                fNac = df.format(sqlPackageDate);
+                Date fNac = sqlPackageDate;
                 Double salario = Double.parseDouble(vista.txtSalario.getText());
                 // Determina si la casilla directivo fue seleccionada            
                 if (vista.checkDirectivo.isSelected()) {
-                    directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero, salario, subor, categoria);
+                    directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero , edad, salario, subor, categoria);
                     res = empresa.agregarEmpleado(directivo);
                 } else {
                     vista.txtCategoria.setEnabled(false);
-                    empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, salario, subor);
+                    empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, edad, salario, subor);
                     res = empresa.agregarEmpleado(empleado);
                 }
 
@@ -99,17 +99,19 @@ public class ControllerEmpleados implements ActionListener {
             String doc = vista.txtDoc.getText();
             String apel = vista.txtApellido.getText().toUpperCase();
             String TID = vista.boxTID.getSelectedItem().toString();        
-            char genero = ' ';
+            String genero = "";
             String subor = " ";
             Integer categoria = 0;
+            int edad  = 0;
 
             if (vista.checkSubordinado.isSelected()) { subor = "SI"; }
-            if (vista.btnHombre.isSelected()) { genero = 'H'; }
-            if (vista.btnMujer.isSelected()) { genero = 'M'; }
+            if (vista.btnHombre.isSelected()) { genero = "H"; }
+            if (vista.btnMujer.isSelected()) { genero = "M"; }
 
             // Compara si todos los campos estan vacios
             boolean comp1 = TID.equals("Seleccione...") || nombre.equals("") || apel.equals("") || vista.txtCategoria.getText().equals("");
-            boolean comp2 = genero == ' ' || vista.txtFechaNac.getDate() == null || vista.txtSalario.getText().isEmpty();
+            boolean comp2 = genero.equals("") || vista.txtFechaNac.getDate() == null || vista.txtSalario.getText().isEmpty();
+
 
             int fila = vista.tablaEmpleados.getSelectedRow();
             if (fila == -1) {
@@ -124,14 +126,14 @@ public class ControllerEmpleados implements ActionListener {
                     //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
                     java.sql.Date sqlPackageDate = new java.sql.Date(vista.txtFechaNac.getDate().getTime());
                     /// Da formato a la fecha obtenida en la linea anterior
-                    String fNac = df.format(sqlPackageDate);
+                    Date fNac = sqlPackageDate;
                     Double salario = Double.parseDouble(vista.txtSalario.getText());
                     // Determina si la casilla directivo fue seleccionada
                     if (vista.checkDirectivo.isSelected()) {
-                        directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero, salario, subor, categoria);
+                        directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero, edad, salario, subor, categoria);
                         res = empresa.modificarEmpleado(fila, empleado);
                     } else {
-                        empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, salario, subor);
+                        empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, edad, salario, subor);
                         res = empresa.modificarEmpleado(fila, empleado);
                     }
                     if (res == true) {
@@ -238,7 +240,7 @@ public class ControllerEmpleados implements ActionListener {
             user[4] = String.valueOf(empresa.getEmpleados().get(i).getApellidos());
             user[5] = String.valueOf(empresa.getEmpleados().get(i).getFechaNacimiento());
             user[6] = String.valueOf(empresa.getEmpleados().get(i).getGenero());
-            user[7] = String.valueOf(empleado.calcularEdad());
+            user[7] = String.valueOf(empresa.getEmpleados().get(i));
             user[8] = String.valueOf(empresa.getEmpleados().get(i).getSalario());
             user[9] = String.valueOf(empresa.getEmpleados().get(i).getSubordinado());
             if (vista.txtCategoria.getText().equals("") || vista.txtCategoria.getText().equals("0")) {

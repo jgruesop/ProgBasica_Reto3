@@ -9,7 +9,12 @@ import Model.*;
 import View.InterGestionClientes;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -18,28 +23,28 @@ import javax.swing.table.DefaultTableModel;
  * @author Q-USER
  */
 public class ControllerClientes implements ActionListener {
-    
+
     private Empresa empresa;    
     private Cliente cliente ;  
     private InterGestionClientes vista;
     java.sql.Date sqlPackageDate;
     SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     DefaultTableModel modelo;    //Modelo por defecto de la Tabla
-    String fNac;
-
     
-    ControllerClientes(Empresa empresa, Cliente cliente, InterGestionClientes vista) {
-        this.empresa = empresa;
-        this.cliente = cliente;
+    ControllerClientes(Empresa empresa, InterGestionClientes vista ) {
         this.vista = vista;
+        this.empresa = empresa;
         vista.btnGuardar.addActionListener(this);
         vista.btnActualizar.addActionListener(this);
         vista.btnCancelar.addActionListener(this);
         vista.btnEliminar.addActionListener(this);
+        vista.tablaClientes.getTableHeader().setReorderingAllowed(false);//Bloquea el movimiento de las columnas, e impide imvertir la información.
+        inhabilitarbotones();
+        inhabilitarCampos();
+        ListarClientes();
+        disenoTabla();
     }
    
-    
-    
     @Override
     public void actionPerformed(ActionEvent evt) {
         
@@ -52,27 +57,27 @@ public class ControllerClientes implements ActionListener {
             String tel = vista.txtTel.getText();
             String dir = vista.txtDir.getText().toUpperCase();
             String email = vista.txtEmail.getText();                
-            char genero = ' ';
-
-            if (vista.btnHombre.isSelected()){ genero = 'H'; }
-            if(vista.btnMujer.isSelected()) { genero = 'M'; }
+            String genero = "";
+            int edad = 0;
+            if (vista.btnHombre.isSelected()){ genero = "H"; }
+            if(vista.btnMujer.isSelected()) { genero = "M"; }
 
             // Compara si todos los campos estan vacios
             boolean comp1 = nombre.equals("") || apel.equals("") || TID.equals("Seleccione...") || vista.txtFechaNac.getDate() == null ;
-            boolean comp2 = tel.equals("") ||  dir.equals("") || email.equals("") || genero == ' ';
+            boolean comp2 = tel.equals("") ||  dir.equals("") || email.equals("") || genero.equals("");
 
-            if ( comp1 || comp2 ){
-                JOptionPane.showMessageDialog(null, "Debe diligenciar todos los campos.");
+            if ( comp1 || comp2 ){                
+                JOptionPane.showMessageDialog(null, "Debe seleccionar un clientes de la tabla.");
             } else {                
                 //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
                 sqlPackageDate = new java.sql.Date(vista.txtFechaNac.getDate().getTime());
                 /// Da formato a la fecha obtenida en la linea anterior
-                fNac = df.format(sqlPackageDate);
-                cliente = new Cliente(id, TID, doc, nombre, apel, fNac, genero, tel, dir, email);                        
+                Date fNac = sqlPackageDate;
+                cliente = new Cliente(id, TID, doc, nombre, apel, fNac, genero, edad, tel, dir, email);                        
                 boolean res = empresa.agregarCliente(cliente);
                 if (res == true) {
                     JOptionPane.showMessageDialog(null, "Datos almacenados exitosamente.");                                
-                    obtenerListarClientes();                
+                    ListarClientes();                
                     disenoTabla();
                     limpiarCampos();
                 } else {
@@ -90,14 +95,14 @@ public class ControllerClientes implements ActionListener {
             String tel = vista.txtTel.getText();
             String dir = vista.txtDir.getText().toUpperCase();
             String email = vista.txtEmail.getText();   
-            char genero = ' ';
-
-            if (vista.btnHombre.isSelected()){ genero = 'H'; }
-            if(vista.btnMujer.isSelected()) { genero = 'M'; }
+            String genero = "";
+            int edad = 0;    
+            if (vista.btnHombre.isSelected()){ genero = "H"; }
+            if(vista.btnMujer.isSelected()) { genero = "M"; }
 
             // Compara si todos los campos estan vacios
             boolean comp1 = nombre.equals("") || apel.equals("") || TID.equals("Seleccione...") || vista.txtFechaNac.getDate() == null ;
-            boolean comp2 = tel.equals("") ||  dir.equals("") || email.equals("") || genero == ' ';
+            boolean comp2 = tel.equals("") ||  dir.equals("") || email.equals("") || genero.equals("");
 
             int fila = vista.tablaClientes.getSelectedRow();
             if (fila == -1) {
@@ -109,13 +114,13 @@ public class ControllerClientes implements ActionListener {
                     //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
                     java.sql.Date sqlPackageDate = new java.sql.Date(vista.txtFechaNac.getDate().getTime());
                     /// Da formato a la fecha obtenida en la linea anterior
-                    String fNac = df.format(sqlPackageDate);
-                    cliente = new Cliente(id, TID, doc, nombre, apel, fNac,  genero, tel,  dir, email);                        
+                    Date fNac = sqlPackageDate;
+                    cliente = new Cliente(id, TID, doc, nombre, apel, fNac,  genero, edad, tel,  dir, email);                        
                     boolean res = empresa.modificarCliente(fila, cliente);
                     if (res == true) {
                         JOptionPane.showMessageDialog(null, "Datos Actualizados exitosamente.");    
                         //limpiarTabla(modelo);
-                        obtenerListarClientes();                
+                        ListarClientes();                
                         disenoTabla();
                         limpiarCampos();
                     } else {
@@ -128,32 +133,29 @@ public class ControllerClientes implements ActionListener {
         if (evt.getSource() == vista.btnEliminar) {
             inhabilitarCampos();
             int fila = vista.tablaClientes.getSelectedRow();
-            if (fila == -1) {
+            if (fila < 0) {
                 JOptionPane.showMessageDialog(null, "Seleccionar el registro de la tabla");
             } else {                
                 int op = JOptionPane.showConfirmDialog(null, "Esta seguro de eliminar el registro?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
-                if (op == JOptionPane.YES_OPTION) {                    
-                    boolean res = empresa.eliminarCliente(fila);
+                if (op == JOptionPane.YES_OPTION) {    
+                    String idCliente = vista.tablaClientes.getValueAt(fila, 0).toString();
+                    boolean res = empresa.eliminarCliente(idCliente);
                     if (res == true) {
                         JOptionPane.showMessageDialog(null, "Registro eliminado exitosamente.");
-                        obtenerListarClientes();
+                        ListarClientes();
+                        disenoTabla();
                         limpiarCampos();
-                        habilitarCampos();
+                        inhabilitarCampos();
                     } else {
                         JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
                     }                    
                 }
-                obtenerListarClientes();
+                ListarClientes();
                 disenoTabla();
                 limpiarCampos();
                 inhabilitarbotones();
-                habilitarCampos();
+                inhabilitarCampos();
             }             
-        }
-        
-        if(evt.getSource() == vista.btnCancelar) {
-            limpiarCampos();
-            habilitarbotonesLimpiar();  
         }
     }
     
@@ -161,39 +163,74 @@ public class ControllerClientes implements ActionListener {
     /***
      * Metodo para listar los clientes en la tabla
      */
-    public void obtenerListarClientes() {       
+    public void ListarClientes() {       
         
-        modelo = new DefaultTableModel();
-        modelo.addColumn("Id");
-        modelo.addColumn("Tid");
-        modelo.addColumn("Documento");
-        modelo.addColumn("Nombres");
-        modelo.addColumn("Apellidos");
-        modelo.addColumn("Fecha Nacimiento");
-        modelo.addColumn("Genero");
-        modelo.addColumn("Edad");        
-        modelo.addColumn("Teléfono");
-        modelo.addColumn("Correo electrónico");
-        modelo.addColumn("Dirección");
+        ArrayList<Cliente> listaClientes = new ArrayList<>();
+        listaClientes = empresa.obtenerClientes();
         
-        String[] user = new String[11];
+        Object[][] matriz = new Object[listaClientes.size()][11];            
+        modelo = (DefaultTableModel) vista.tablaClientes.getModel();            
         
-        for (int i = 0; i < empresa.getClientes().size(); i++) {
+        for (int i = 0; i < listaClientes.size(); i++){
+            matriz[i][0] = String.valueOf(listaClientes.get(i).getId());
+            matriz[i][1] = String.valueOf(listaClientes.get(i).getTID());
+            matriz[i][2] = String.valueOf(listaClientes.get(i).getDocumento());
+            matriz[i][3] = String.valueOf(listaClientes.get(i).getNombre());
+            matriz[i][4] = String.valueOf(listaClientes.get(i).getApellidos());
+            matriz[i][5] = String.valueOf(listaClientes.get(i).getFechaNacimiento());
+            matriz[i][6] = String.valueOf(listaClientes.get(i).getGenero());
+            matriz[i][7] = String.valueOf(listaClientes.get(i).getEdad());
+            matriz[i][8] = String.valueOf(listaClientes.get(i).getTelefono());
+            matriz[i][9] = String.valueOf(listaClientes.get(i).getEmail());
+            matriz[i][10] = String.valueOf(listaClientes.get(i).getDireccion());                               
+        }            
+        vista.tablaClientes.setModel(new javax.swing.table.DefaultTableModel(
+            matriz,
+            new String [] {
+                "Id", "Tid", "Documento", "Nombres", "Apellidos", "Fecha Nacimiento",
+                "Genero", "Edad", "Teléfono","Correo electrónico", "Dirección"
+            }
+        ));  
+    }
+    
+    public static void obtenerDatosTabla() {
+        int fila = InterGestionClientes.tablaClientes.getSelectedRow();        
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(null, "No se ha seleccionado ningún registro de la tabla");
+            InterGestionClientes.btnActualizar.setEnabled(false);
+            InterGestionClientes.btnEliminar.setEnabled(false);            
+        } else {          
+            habilitarbotones();
+            String TID = (String)InterGestionClientes.tablaClientes.getValueAt(fila, 1);
+            String doc = (String)InterGestionClientes.tablaClientes.getValueAt(fila, 2);
+            String nom = (String)InterGestionClientes.tablaClientes.getValueAt(fila, 3);
+            String apel = (String)InterGestionClientes.tablaClientes.getValueAt(fila, 4);            
+            String fNac = (String) InterGestionClientes.tablaClientes.getValueAt(fila, 5);            
+            String genero = (String)InterGestionClientes.tablaClientes.getValueAt(fila, 6);
+            String tel =  (String)InterGestionClientes.tablaClientes.getValueAt(fila, 8);            
+            String mail = (String)InterGestionClientes.tablaClientes.getValueAt(fila, 9);
+            String dir = (String)InterGestionClientes.tablaClientes.getValueAt(fila, 10);            
             
-            user[0] = String.valueOf(empresa.getClientes().get(i).getId());
-            user[1] = String.valueOf(empresa.getClientes().get(i).getTID());
-            user[2] = String.valueOf(empresa.getClientes().get(i).getDocumento());
-            user[3] = String.valueOf(empresa.getClientes().get(i).getNombre());
-            user[4] = String.valueOf(empresa.getClientes().get(i).getApellidos());
-            user[5] = String.valueOf(empresa.getClientes().get(i).getFechaNacimiento());
-            user[6] = String.valueOf(empresa.getClientes().get(i).getGenero());
-            user[7] = String.valueOf(cliente.calcularEdad());
-            user[8] = String.valueOf(empresa.getClientes().get(i).getTelefono());
-            user[9] = String.valueOf(empresa.getClientes().get(i).getEmail());
-            user[10] = String.valueOf(empresa.getClientes().get(i).getDireccion());
-            modelo.addRow(user);
+            InterGestionClientes.boxTID.setSelectedItem(TID);
+            InterGestionClientes.txtDoc.setText(doc);
+            InterGestionClientes.txtNombre.setText(nom);       
+            InterGestionClientes.txtApellido.setText(apel); 
+            Date date = null;
+            try {
+                date = new SimpleDateFormat("yyyy-mm-dd").parse(fNac);
+            } catch (ParseException ex) {
+                Logger.getLogger(InterGestionClientes.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            InterGestionClientes.txtFechaNac.setDate(date);
+            if ("H".equals(genero)) {
+                InterGestionClientes.btnHombre.setSelected(true);
+            } else {
+                InterGestionClientes.btnMujer.setSelected(true);
+            }
+            InterGestionClientes.txtTel.setText(tel);
+            InterGestionClientes.txtDir.setText(dir);
+            InterGestionClientes.txtEmail.setText(mail);
         }
-        vista.tablaClientes.setModel(modelo);
     }
     
      public void habilitarCampos() {
@@ -217,9 +254,9 @@ public class ControllerClientes implements ActionListener {
         vista.txtFechaNac.setEnabled(false);
         vista.btnHombre.setEnabled(false);
         vista.btnMujer.setEnabled(false);
-        vista.txtTel.setEnabled(false);
-        vista.txtDir.setEnabled(false);
-        vista.txtEmail.setEnabled(false);
+        vista.txtTel.setEnabled(true);
+        vista.txtDir.setEnabled(true);
+        vista.txtEmail.setEnabled(true);
     }
 
     public void inhabilitarbotones() {
@@ -229,16 +266,16 @@ public class ControllerClientes implements ActionListener {
     }
 
     public void habilitarbotonesLimpiar() {
-        obtenerListarClientes();
+        ListarClientes();
         disenoTabla();
         vista.btnGuardar.setEnabled(true);
         vista.btnActualizar.setEnabled(false);
         vista.btnEliminar.setEnabled(false);        
     }
-    public void habilitarbotones() {        
-        vista.btnGuardar.setEnabled(false);
-        vista.btnActualizar.setEnabled(true);
-        vista.btnEliminar.setEnabled(true);        
+    public static void habilitarbotones() {        
+        InterGestionClientes.btnGuardar.setEnabled(false);
+        InterGestionClientes.btnActualizar.setEnabled(true);
+        InterGestionClientes.btnEliminar.setEnabled(true);        
     }
     
     /**
@@ -256,7 +293,7 @@ public class ControllerClientes implements ActionListener {
         vista.radioGenero.clearSelection();
     }
     
-    //Método para diseñar las columnas de la tabla Empresa
+    //Método para diseñar las columnas de la tabla Cliente
     void disenoTabla() {
         //Redimensionar el tamaño de las columnas de la tabla.        
         vista.tablaClientes.getColumnModel().getColumn(0).setMaxWidth(0);

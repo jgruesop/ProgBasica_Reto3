@@ -5,6 +5,8 @@
  */
 package Model;
 
+import java.util.Date;
+
 
 /**
  *
@@ -17,9 +19,9 @@ public class Directivo extends Empleado {
     private Integer categoria;    
 
     public Directivo(int id, String TID, String documento, 
-            String nombre, String apellidos, String fechaNacimiento, char genero, 
-            Double salario, String subordinado, Integer categoria) {
-        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, salario, subordinado);
+            String nombre, String apellidos, Date fechaNacimiento, String genero, 
+            int edad, Double salario, String subordinado, Integer categoria) {
+        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad, salario, subordinado);
         this.categoria = categoria;
     }   
     
