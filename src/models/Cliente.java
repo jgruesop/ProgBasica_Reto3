@@ -17,32 +17,59 @@ import java.util.Date;
  */
 public class Cliente extends Persona {
     
+    private int idCliente;    
     private String telefono;
     private String email;
     private String direccion;
-    
 
+    /**
+     * 
+     * @param id
+     * @param TID
+     * @param documento
+     * @param nombre
+     * @param apellidos
+     * @param fechaNacimiento
+     * @param genero
+     * @param edad
+     * @param idCliente
+     * @param telefono
+     * @param direccion
+     * @param email 
+     */
     public Cliente( int id, String TID, String documento, String nombre, String apellidos, 
-            Date fechaNacimiento, String genero, int edad, String telefono, String direccion, String email) {
+            Date fechaNacimiento, String genero, int edad, int idCliente, String telefono, 
+            String direccion, String email) {
         super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);
-        this.telefono = telefono;
-        this.email = email;
-        this.direccion = direccion;        
-    }
-
-    public Cliente( int id, String TID, String documento, String nombre, 
-            String apellidos, Date fechaNacimiento, String genero, int edad, String telefono, String direccion) {
-        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);
+        this.idCliente = idCliente;
         this.telefono = telefono;
         this.direccion = direccion;
-        this.edad = edad;
+        this.email = email;        
     }
 
-    public Cliente(int id, String TID, String documento, String nombre, String apellidos, Date fechaNacimiento, String genero, int edad) {
+    /**
+     * 
+     * @param id
+     * @param TID
+     * @param documento
+     * @param nombre
+     * @param apellidos
+     * @param fechaNacimiento
+     * @param genero
+     * @param edad
+     * @param idCliente
+     * @param telefono
+     * @param direccion 
+     */
+    public Cliente( int id, String TID, String documento, String nombre, 
+            String apellidos, Date fechaNacimiento, String genero, int edad, 
+            int idCliente, String telefono, String direccion) {
         super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);
-    }   
-
-   
+        this.idCliente = idCliente;
+        this.telefono = telefono;
+        this.direccion = direccion;
+        this.edad = edad;        
+    }  
     
     /**
      * @return the telefono
@@ -85,5 +112,18 @@ public class Cliente extends Persona {
     public void setDireccion(String direccion) {
         this.direccion = direccion;
     } 
-    
+
+    /**
+     * @return the id
+     */    
+    public int getIdCliente() {
+        return idCliente;
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setIdCliente(int id) {
+        this.idCliente = id;
+    }    
 }

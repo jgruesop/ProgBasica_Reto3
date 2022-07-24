@@ -5,14 +5,15 @@
  */
 package controllers;
 
-import views.InterGestionClientes;
-import views.InterConsulta;
-import views.Menu;
-import views.InterUsuario;
-import views.InterGestionEmpleados;
+import views.FrmClientes;
+import views.FrmConsulta;
+import views.FrmMenu;
+import views.FrmInterUsuario;
+import views.FrmEmpleados;
 import models.Empresa;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import views.FrmSelectEmpresa;
 
 
 /**
@@ -21,12 +22,12 @@ import java.awt.event.ActionListener;
  */
 public class ControllerMenu implements ActionListener{
 
-    private final Menu vista;
+    private final FrmMenu vista;
     
     private final Empresa empresa;
       
 
-    public ControllerMenu(Menu vista, Empresa empresa) {
+    public ControllerMenu(FrmMenu vista, Empresa empresa) {
         this.vista = vista;           
         this.empresa = empresa;
         vista.jMenuInicio.addActionListener(this);
@@ -35,6 +36,10 @@ public class ControllerMenu implements ActionListener{
         vista.menuConsultasEmpresa.addActionListener(this);
         vista.menuConfigUsuario.addActionListener(this);        
         vista.jMenuSalir.addActionListener(this);
+        vista.setExtendedState(FrmMenu.MAXIMIZED_BOTH);//Permite ejecutar el formulario principal Maximizado
+        vista.setLocationRelativeTo(null);//Permite ubicar el formulario en el centro de la pantalla  
+        vista.setTitle(empresa.getNombre().toUpperCase()
+                + "    - NIT: " + empresa.getNIT());
     }
 
     @Override
@@ -43,7 +48,7 @@ public class ControllerMenu implements ActionListener{
         if (evt.getSource() == vista.menuFormularioEmpleado) {
             vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
             vista.escritorio.repaint();  // Permite limpiar la ventana principal              
-            InterGestionEmpleados ventana = new InterGestionEmpleados();  
+            FrmEmpleados ventana = new FrmEmpleados();  
             ControllerEmpleados ctrlEmpleado = new ControllerEmpleados(empresa, ventana);
             vista.escritorio.add(ventana);
             ventana.show(); 
@@ -52,7 +57,7 @@ public class ControllerMenu implements ActionListener{
         if (evt.getSource() == vista.menuFormularioCliente) {            
             vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
             vista.escritorio.repaint();  // Permite limpiar la ventana principal          
-            InterGestionClientes ventana = new InterGestionClientes();   
+            FrmClientes ventana = new FrmClientes();   
             ControllerClientes ctrlCliente = new ControllerClientes(empresa, ventana);
             vista.escritorio.add(ventana);
             ventana.show(); 
@@ -61,7 +66,7 @@ public class ControllerMenu implements ActionListener{
         if (evt.getSource() == vista.menuConsultasEmpresa) {
             vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
             vista.escritorio.repaint();  // Permite limpiar la ventana principal             
-            InterConsulta ventana = new InterConsulta(empresa);
+            FrmConsulta ventana = new FrmConsulta(empresa);
             vista.escritorio.add(ventana);
             ventana.show(); 
         }
@@ -69,13 +74,16 @@ public class ControllerMenu implements ActionListener{
         if (evt.getSource() == vista.menuConfigUsuario) {
             vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
             vista.escritorio.repaint();  // Permite limpiar la ventana principal             
-            InterUsuario ventana = new InterUsuario();
+            FrmInterUsuario ventana = new FrmInterUsuario();
             vista.escritorio.add(ventana);
             ventana.show(); 
         }        
         
         if (evt.getSource() == vista.jMenuSalir) {
-            System.exit(0);//Permite salir de la aplicación
+            //System.exit(0);//Permite salir de la aplicación
+             vista.dispose(); // Permite cerrar cualquier ventana abierta actualmente 
+            FrmSelectEmpresa ventana = new FrmSelectEmpresa();                        
+            ventana.show();  
         }
     }
     

@@ -5,8 +5,8 @@
  */
 package controllers;
 
-import views.Login;
-import views.ExternalSelectEmpresa;
+import views.FrmLogin;
+import views.FrmSelectEmpresa;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -17,16 +17,17 @@ import java.awt.event.ActionListener;
  */
 public class ControllerLogin implements ActionListener {
 
-    private final Login vista;
+    private final FrmLogin vista;
     
     /**
      *
      * @param vista
      */
-    public ControllerLogin(Login vista) {
+    public ControllerLogin(FrmLogin vista) {
         this.vista = vista;
         vista.btn_inicio.addActionListener(this);
-        vista.btn_cerrar.addActionListener(this);           
+        vista.btn_cerrar.addActionListener(this);    
+        vista.setLocationRelativeTo(null);
     }
     
     @Override
@@ -43,7 +44,7 @@ public class ControllerLogin implements ActionListener {
     
     private void acceso(){      
         vista.dispose(); // Permite cerrar cualquier ventana abierta actualmente 
-        ExternalSelectEmpresa ventana = new ExternalSelectEmpresa();                        
+        FrmSelectEmpresa ventana = new FrmSelectEmpresa();                        
         ventana.show();        
     }
     

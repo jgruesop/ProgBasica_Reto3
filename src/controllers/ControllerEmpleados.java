@@ -5,7 +5,7 @@
  */
 package controllers;
 
-import views.InterGestionEmpleados;
+import views.FrmEmpleados;
 import models.Directivo;
 import models.Empresa;
 import models.Empleado;
@@ -29,10 +29,10 @@ public class ControllerEmpleados implements ActionListener {
     private final SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     private DefaultTableModel modelo;    //Modelo por defecto de la Tabla
     private boolean res = false;
-    private InterGestionEmpleados vista;
+    private FrmEmpleados vista;
     
 
-    public ControllerEmpleados(Empresa empresa, InterGestionEmpleados vista) {
+    public ControllerEmpleados(Empresa empresa, FrmEmpleados vista) {
         this.empresa = empresa;
         this.empleado = empleado;
         this.directivo = directivo;
