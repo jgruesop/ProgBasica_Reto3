@@ -5,11 +5,7 @@
  */
 package controllers;
 
-import views.FrmClientes;
-import views.FrmConsulta;
-import views.FrmMenu;
-import views.FrmInterUsuario;
-import views.FrmEmpleados;
+import views.*;
 import models.Empresa;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -30,12 +26,12 @@ public class ControllerMenu implements ActionListener{
     public ControllerMenu(FrmMenu vista, Empresa empresa) {
         this.vista = vista;           
         this.empresa = empresa;
-        vista.jMenuInicio.addActionListener(this);
+        vista.menuInicio.addActionListener(this);
         vista.menuFormularioEmpleado.addActionListener(this);
         vista.menuFormularioCliente.addActionListener(this);
-        vista.menuConsultasEmpresa.addActionListener(this);
-        vista.menuConfigUsuario.addActionListener(this);        
-        vista.jMenuSalir.addActionListener(this);
+        vista.menuConsultasEmpresa.addActionListener(this);              
+        vista.menuCambiar.addActionListener(this);
+        vista.menuSalir.addActionListener(this);
         vista.setExtendedState(FrmMenu.MAXIMIZED_BOTH);//Permite ejecutar el formulario principal Maximizado
         vista.setLocationRelativeTo(null);//Permite ubicar el formulario en el centro de la pantalla  
         vista.setTitle(empresa.getNombre().toUpperCase()
@@ -69,21 +65,16 @@ public class ControllerMenu implements ActionListener{
             FrmConsulta ventana = new FrmConsulta(empresa);
             vista.escritorio.add(ventana);
             ventana.show(); 
-        }
+        }               
         
-        if (evt.getSource() == vista.menuConfigUsuario) {
-            vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
-            vista.escritorio.repaint();  // Permite limpiar la ventana principal             
-            FrmInterUsuario ventana = new FrmInterUsuario();
-            vista.escritorio.add(ventana);
-            ventana.show(); 
-        }        
-        
-        if (evt.getSource() == vista.jMenuSalir) {
-            //System.exit(0);//Permite salir de la aplicación
-             vista.dispose(); // Permite cerrar cualquier ventana abierta actualmente 
+        if (evt.getSource() == vista.menuCambiar) {                
+            vista.dispose(); // Permite cerrar cualquier ventana abierta actualmente 
             FrmSelectEmpresa ventana = new FrmSelectEmpresa();                        
             ventana.show();  
+        }
+        
+        if (evt.getSource() == vista.menuSalir) {
+            System.exit(0);//Permite salir de la aplicación            
         }
     }
     

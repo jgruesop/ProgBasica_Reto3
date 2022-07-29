@@ -15,22 +15,21 @@ import models.Empresa;
  * @version 1.2
  */
 public class FrmMenu extends javax.swing.JFrame {
-    
-    
+        
     /**
      * Creates new form JfrPrincipal
      */
     public FrmMenu() {              
         initComponents();   
-               
-                
         this.setExtendedState(FrmMenu.MAXIMIZED_BOTH);//Permite ejecutar el formulario principal Maximizado
         this.setLocationRelativeTo(null);//Permite ubicar el formulario en el centro de la pantalla               
     }    
 
-    FrmMenu(Empresa empresa) {
+    public FrmMenu(Empresa empresa) {
         initComponents();   
         ControllerMenu ctrlMenu = new ControllerMenu(this, empresa);   
+        this.setExtendedState(FrmMenu.MAXIMIZED_BOTH);//Permite ejecutar el formulario principal Maximizado
+        this.setLocationRelativeTo(null);//Permite ubicar el formulario en el centro de la pantalla     
     }
 
     /**
@@ -44,18 +43,19 @@ public class FrmMenu extends javax.swing.JFrame {
 
         escritorio = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenuInicio = new javax.swing.JMenu();
+        menuInicio = new javax.swing.JMenu();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        menuCambiar = new javax.swing.JMenuItem();
+        jSeparator5 = new javax.swing.JPopupMenu.Separator();
+        menuSalir = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
         menuFormularioEmpleado = new javax.swing.JMenuItem();
         jSeparator1 = new javax.swing.JPopupMenu.Separator();
         menuFormularioCliente = new javax.swing.JMenuItem();
         jSeparator3 = new javax.swing.JPopupMenu.Separator();
         menuConsultasEmpresa = new javax.swing.JMenuItem();
-        jSeparator4 = new javax.swing.JPopupMenu.Separator();
-        menuConfigUsuario = new javax.swing.JMenuItem();
-        jSeparator2 = new javax.swing.JPopupMenu.Separator();
-        jMenuSalir = new javax.swing.JMenuItem();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         escritorio.setBackground(new java.awt.Color(0, 102, 153));
 
@@ -74,39 +74,44 @@ public class FrmMenu extends javax.swing.JFrame {
         jMenuBar1.setBorderPainted(false);
         jMenuBar1.setFont(new java.awt.Font("Dialog", 1, 14)); // NOI18N
 
-        jMenuInicio.setText("   Inicio   ");
-        jMenuInicio.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        menuInicio.setText("      Inicio      ");
+        menuInicio.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        menuInicio.add(jSeparator2);
+
+        menuCambiar.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.CTRL_MASK));
+        menuCambiar.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        menuCambiar.setText("Cambiar empresa");
+        menuInicio.add(menuCambiar);
+        menuInicio.add(jSeparator5);
+
+        menuSalir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        menuSalir.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
+        menuSalir.setText("Salir");
+        menuInicio.add(menuSalir);
+
+        jMenuBar1.add(menuInicio);
+
+        jMenu1.setText("       Empresa       ");
+        jMenu1.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
 
         menuFormularioEmpleado.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuFormularioEmpleado.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         menuFormularioEmpleado.setText("Formulario empleado");
-        jMenuInicio.add(menuFormularioEmpleado);
-        jMenuInicio.add(jSeparator1);
+        jMenu1.add(menuFormularioEmpleado);
+        jMenu1.add(jSeparator1);
 
         menuFormularioCliente.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_C, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuFormularioCliente.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         menuFormularioCliente.setText("Formulario cliente");
-        jMenuInicio.add(menuFormularioCliente);
-        jMenuInicio.add(jSeparator3);
+        jMenu1.add(menuFormularioCliente);
+        jMenu1.add(jSeparator3);
 
         menuConsultasEmpresa.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
         menuConsultasEmpresa.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
         menuConsultasEmpresa.setText("Consultas");
-        jMenuInicio.add(menuConsultasEmpresa);
-        jMenuInicio.add(jSeparator4);
+        jMenu1.add(menuConsultasEmpresa);
 
-        menuConfigUsuario.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_U, java.awt.event.InputEvent.SHIFT_MASK | java.awt.event.InputEvent.CTRL_MASK));
-        menuConfigUsuario.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        menuConfigUsuario.setText("Configración usuario");
-        jMenuInicio.add(menuConfigUsuario);
-        jMenuInicio.add(jSeparator2);
-
-        jMenuSalir.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        jMenuSalir.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        jMenuSalir.setText("Cerrar");
-        jMenuInicio.add(jMenuSalir);
-
-        jMenuBar1.add(jMenuInicio);
+        jMenuBar1.add(jMenu1);
 
         setJMenuBar(jMenuBar1);
 
@@ -165,17 +170,18 @@ public class FrmMenu extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public static javax.swing.JDesktopPane escritorio;
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuBar jMenuBar1;
-    public javax.swing.JMenu jMenuInicio;
-    public javax.swing.JMenuItem jMenuSalir;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
-    private javax.swing.JPopupMenu.Separator jSeparator4;
-    public javax.swing.JMenuItem menuConfigUsuario;
+    private javax.swing.JPopupMenu.Separator jSeparator5;
+    public javax.swing.JMenuItem menuCambiar;
     public javax.swing.JMenuItem menuConsultasEmpresa;
     public javax.swing.JMenuItem menuFormularioCliente;
     public javax.swing.JMenuItem menuFormularioEmpleado;
+    public javax.swing.JMenu menuInicio;
+    public javax.swing.JMenuItem menuSalir;
     // End of variables declaration//GEN-END:variables
    
 

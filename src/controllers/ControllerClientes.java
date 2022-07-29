@@ -46,8 +46,7 @@ public class ControllerClientes implements ActionListener {
         vista.btnEliminar.addActionListener(this);
         vista.btnBuscar.addActionListener(this);
         FrmClientes.tablaClientes.getTableHeader().setReorderingAllowed(false);//Bloquea el movimiento de las columnas, e impide imvertir la información.
-        inhabilitarbotones();
-        //inhabilitarCampos();
+        inhabilitarbotones();        
         listarClientes();
         disenoTabla();
     }
@@ -56,8 +55,8 @@ public class ControllerClientes implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
         
         if (evt.getSource() == FrmClientes.btnGuardar) {
-            int idPersona = 0;
-            int idCliente = 0;            
+            int idCliente = 0;   
+            int idEmpresa = empresa.getId();
             String nombre = FrmClientes.txtNombre.getText().toUpperCase();
             String doc = FrmClientes.txtDoc.getText();
             String apel = FrmClientes.txtApellido.getText().toUpperCase();
@@ -81,12 +80,12 @@ public class ControllerClientes implements ActionListener {
                 sqlPackageDate = new java.sql.Date(FrmClientes.txtFechaNac.getDate().getTime());
                 /// Da formato a la fecha obtenida en la linea anterior
                 Date fNac = sqlPackageDate;
-                cliente = new Cliente(idPersona, TID, doc, nombre, apel, (java.sql.Date) fNac, genero, edad, idCliente, tel, dir, email);
+                cliente = new Cliente(TID, doc, nombre, apel, (java.sql.Date) fNac, genero, edad, idCliente, tel, dir, email, idEmpresa);
                 boolean res = empresa.duplicados(cliente);
-                if (res) {
-                    JOptionPane.showMessageDialog(null, "El cliente ya fue registrado anteriormente.");                                
+                if (res == true) {
+                    JOptionPane.showMessageDialog(null, "Ya existe un cliente con el documento " + doc);                                
                 }else {
-                    boolean res1 = empresa.agregarCliente(cliente);
+                    boolean res1 = empresa.agregarCliente(cliente, empresa);
                     if (res1 == true) {
                         JOptionPane.showMessageDialog(null, "Datos almacenados exitosamente.");                                
                         listarClientes();                
@@ -100,10 +99,10 @@ public class ControllerClientes implements ActionListener {
             }
         }
         
-        if (evt.getSource() == FrmClientes.btnActualizar) {            
+        if (evt.getSource() == FrmClientes.btnActualizar) {             
             int fila = FrmClientes.tablaClientes.getSelectedRow();
-            int idPersona = Integer.parseInt((String)FrmClientes.tablaClientes.getValueAt(fila, 0));
-            int idCliente = Integer.parseInt((String)FrmClientes.tablaClientes.getValueAt(fila, 8));            
+            int idPersona = Integer.parseInt((String)FrmClientes.tablaClientes.getValueAt(fila, 0));            
+            int idEmpresa = empresa.getId();
             String nombre = FrmClientes.txtNombre.getText().toUpperCase();
             String doc = FrmClientes.txtDoc.getText();
             String apel = FrmClientes.txtApellido.getText().toUpperCase();
@@ -127,17 +126,19 @@ public class ControllerClientes implements ActionListener {
                 if (comp1 || comp2) {
                     JOptionPane.showMessageDialog(null, "La información no registra ningún cambio.");
                 } else {      
+                    int idCliente = Integer.parseInt((String)FrmClientes.tablaClientes.getValueAt(fila, 8));  
                     //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
                     java.sql.Date sqlPackageDate = new java.sql.Date(FrmClientes.txtFechaNac.getDate().getTime());
                     /// Da formato a la fecha obtenida en la linea anterior
                     Date fNac = sqlPackageDate;
-                    cliente = new Cliente(idPersona, TID, doc, nombre, apel, fNac, genero, edad, idCliente, tel,  dir, email);                        
-                    boolean res = empresa.modificarCliente(cliente);
+                    cliente = new Cliente(idPersona, TID, doc, nombre, apel, fNac, genero, edad, idCliente, tel,  dir, email, idEmpresa);                        
+                    boolean res = empresa.modificarCliente(cliente, empresa);
                     if (res == true) {
                         JOptionPane.showMessageDialog(null, "Datos Actualizados exitosamente.");                            
                         listarClientes();                
                         disenoTabla();
                         limpiarCampos();
+                        habilitarCampos();
                         inhabilitarbotones(); 
                     } else {
                         JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
@@ -148,8 +149,8 @@ public class ControllerClientes implements ActionListener {
         
         if (evt.getSource() == FrmClientes.btnEliminar) {            
             int fila = FrmClientes.tablaClientes.getSelectedRow();
-            int idPersona = Integer.parseInt((String)FrmClientes.tablaClientes.getValueAt(fila, 0));
-            int idCliente = Integer.parseInt((String)FrmClientes.tablaClientes.getValueAt(fila, 8));            
+            int idPersona = Integer.parseInt((String)FrmClientes.tablaClientes.getValueAt(fila, 0));             
+            int idEmpresa = empresa.getId();
             String nombre = FrmClientes.txtNombre.getText().toUpperCase();
             String doc = FrmClientes.txtDoc.getText();
             String apel = FrmClientes.txtApellido.getText().toUpperCase();
@@ -160,32 +161,45 @@ public class ControllerClientes implements ActionListener {
             String genero = "";
             int edad = 0;    
             if (FrmClientes.btnHombre.isSelected()){ genero = "H"; }
-            if(FrmClientes.btnMujer.isSelected()) { genero = "M"; }                                      
+            if(FrmClientes.btnMujer.isSelected()) { genero = "M"; } 
+            
+            // Compara si todos los campos estan vacios
+            boolean comp1 = nombre.equals("") || apel.equals("") || TID.equals("Seleccione...") || FrmClientes.txtFechaNac.getDate() == null ;
+            boolean comp2 = tel.equals("") ||  dir.equals("") || email.equals("") || genero.equals("");
+
             
             if (fila < 0) {
                 JOptionPane.showMessageDialog(null, "Seleccionar el registro de la tabla");
-            } else {                
-                int op = JOptionPane.showConfirmDialog(null, "Esta seguro de eliminar el registro?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
-                if (op == JOptionPane.YES_OPTION) { 
-                    //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
-                    java.sql.Date sqlPackageDate = new java.sql.Date(FrmClientes.txtFechaNac.getDate().getTime());
-                    /// Da formato a la fecha obtenida en la linea anterior
-                    Date fNac = sqlPackageDate;
-                    cliente = new Cliente(idPersona, TID, doc, nombre, apel, fNac, genero, edad, idCliente, tel,  dir, email);                        
-                    boolean res = empresa.eliminarCliente(idCliente, cliente);
-                    if (res == true) {
-                        JOptionPane.showMessageDialog(null, "Registro eliminado exitosamente.");
-                        listarClientes();
-                        disenoTabla();
-                        limpiarCampos();                        
-                    } else {
-                        JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
-                    }                    
+            } else {   
+                if (comp1 || comp2) {
+                    JOptionPane.showMessageDialog(null, "No es posible aplicar esa acción.");
+                } else {      
+                    int op = JOptionPane.showConfirmDialog(null, "Esta seguro de eliminar el registro?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                    if (op == JOptionPane.YES_OPTION) { 
+                        int idCliente = Integer.parseInt((String)FrmClientes.tablaClientes.getValueAt(fila, 8)); 
+                        //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
+                        java.sql.Date sqlPackageDate = new java.sql.Date(FrmClientes.txtFechaNac.getDate().getTime());
+                        /// Da formato a la fecha obtenida en la linea anterior
+                        Date fNac = sqlPackageDate;
+                        cliente = new Cliente(idPersona, TID, doc, nombre, apel, fNac, genero, edad, idCliente, tel,  dir, email, idEmpresa);                        
+                        boolean res = empresa.eliminarCliente(idCliente, cliente, empresa);
+                        if (res == true) {
+                            JOptionPane.showMessageDialog(null, "Registro eliminado exitosamente.");
+                            listarClientes();
+                            disenoTabla();
+                            limpiarCampos();
+                            habilitarCampos();
+                            inhabilitarbotones();
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
+                        }                    
+                    }
                 }
-                listarClientes();
-                disenoTabla();
-                limpiarCampos();
-                inhabilitarbotones();                
+//                listarClientes();
+//                disenoTabla();
+//                limpiarCampos();
+//                habilitarCampos();                       
+//                inhabilitarbotones();                
             }             
         }
         
@@ -197,8 +211,9 @@ public class ControllerClientes implements ActionListener {
         if (evt.getSource() == FrmClientes.btnCancelar) {            
             listarClientes();
             disenoTabla();  
-            inhabilitarbotones();            
-            limpiarCampos();            
+            inhabilitarbotones();  
+            limpiarCampos(); 
+            habilitarCampos();                       
         }        
         
     }
@@ -226,14 +241,14 @@ public class ControllerClientes implements ActionListener {
             matriz[i][7] = String.valueOf(listaClientes.get(i).getEdad());
             matriz[i][8] = String.valueOf(listaClientes.get(i).getIdCliente());
             matriz[i][9] = String.valueOf(listaClientes.get(i).getTelefono());
-            matriz[i][10] = String.valueOf(listaClientes.get(i).getEmail());                               
-            matriz[i][11] = String.valueOf(listaClientes.get(i).getDireccion());               
+            matriz[i][10] = String.valueOf(listaClientes.get(i).getDireccion());
+            matriz[i][11] = String.valueOf(listaClientes.get(i).getEmail());               
         }            
         FrmClientes.tablaClientes.setModel(new javax.swing.table.DefaultTableModel(
             matriz,
             new String [] {
                 "Id", "Tid", "Documento", "Nombres", "Apellidos", "Fecha Nacimiento",
-                "Genero", "Edad", "IdCliente", "Teléfono","Correo electrónico", "Dirección"
+                "Genero", "Edad", "IdCliente", "Teléfono", "Dirección","Correo electrónico"
                 
             }
         ));  
@@ -247,6 +262,8 @@ public class ControllerClientes implements ActionListener {
             FrmClientes.btnEliminar.setEnabled(false);            
         } else {          
             habilitarbotones();
+            inhabilitarCampos();
+            FrmClientes.txtBuscar.setText("");
             String TID = (String)FrmClientes.tablaClientes.getValueAt(fila, 1);
             String doc = (String)FrmClientes.tablaClientes.getValueAt(fila, 2);
             String nom = (String)FrmClientes.tablaClientes.getValueAt(fila, 3);
@@ -282,7 +299,7 @@ public class ControllerClientes implements ActionListener {
     public void buscarClientes() {       
         
         ArrayList<Cliente> listaCliente = new ArrayList<>();
-        listaCliente = empresa.buscarCliente();
+        listaCliente = empresa.buscarCliente(empresa);
         
          if (vista.txtBuscar.getText().equals("Buscar NIT") || listaCliente.isEmpty() || vista.txtBuscar.getText().equals("")) {
              JOptionPane.showMessageDialog(null, "No se encontró ningún resultado");
@@ -299,11 +316,11 @@ public class ControllerClientes implements ActionListener {
                 matriz[i][4] = String.valueOf(listaCliente.get(i).getApellidos());
                 matriz[i][5] = String.valueOf(listaCliente.get(i).getFechaNacimiento());
                 matriz[i][6] = String.valueOf(listaCliente.get(i).getGenero());
-                matriz[i][7] = String.valueOf(listaCliente.get(i).getEdad());
+                matriz[i][7] = String.valueOf(listaCliente.get(i).getEdad());   
                 matriz[i][8] = String.valueOf(listaCliente.get(i).getIdCliente());
                 matriz[i][9] = String.valueOf(listaCliente.get(i).getTelefono());
-                matriz[i][10] = String.valueOf(listaCliente.get(i).getEmail());                               
-                matriz[i][11] = String.valueOf(listaCliente.get(i).getDireccion());                                           
+                matriz[i][10] = String.valueOf(listaCliente.get(i).getDireccion());
+                matriz[i][11] = String.valueOf(listaCliente.get(i).getEmail()); 
             }            
             FrmClientes.tablaClientes.setModel(new javax.swing.table.DefaultTableModel(
                 matriz,
@@ -316,30 +333,14 @@ public class ControllerClientes implements ActionListener {
         }
     }
     
-    public void habilitarCampos() {
+    public static void habilitarCampos() {
         FrmClientes.boxTID.setEnabled(true);
-        FrmClientes.txtDoc.setEnabled(true);
-        FrmClientes.txtNombre.setEnabled(true);       
-        FrmClientes.txtApellido.setEnabled(true); 
-        FrmClientes.txtFechaNac.setEnabled(true);
-        FrmClientes.btnHombre.setEnabled(true);
-        FrmClientes.btnMujer.setEnabled(true);
-        FrmClientes.txtTel.setEnabled(true);
-        FrmClientes.txtDir.setEnabled(true);
-        FrmClientes.txtEmail.setEnabled(true);     
+        FrmClientes.txtDoc.setEnabled(true);  
     }
 
-    private void inhabilitarCampos() {
+    private static void inhabilitarCampos() {
         FrmClientes.boxTID.setEnabled(false);
         FrmClientes.txtDoc.setEnabled(false);
-        FrmClientes.txtNombre.setEnabled(false);       
-        FrmClientes.txtApellido.setEnabled(false); 
-        FrmClientes.txtFechaNac.setEnabled(false);
-        FrmClientes.btnHombre.setEnabled(false);
-        FrmClientes.btnMujer.setEnabled(false);
-        FrmClientes.txtTel.setEnabled(true);
-        FrmClientes.txtDir.setEnabled(true);
-        FrmClientes.txtEmail.setEnabled(true);
     }
 
     private void inhabilitarbotones() {
@@ -348,13 +349,7 @@ public class ControllerClientes implements ActionListener {
         FrmClientes.btnEliminar.setEnabled(false);        
     }
 
-    private void habilitarbotonesLimpiar() {
-        listarClientes();
-        disenoTabla();
-        FrmClientes.btnGuardar.setEnabled(true);
-        FrmClientes.btnActualizar.setEnabled(false);
-        FrmClientes.btnEliminar.setEnabled(false);        
-    }
+    
     private static void habilitarbotones() {        
         FrmClientes.btnGuardar.setEnabled(false);
         FrmClientes.btnActualizar.setEnabled(true);

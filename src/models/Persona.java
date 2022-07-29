@@ -38,6 +38,17 @@ public class Persona {
         this.genero = genero;      
         this.edad = edad;
     }  
+    
+    public Persona(String TID, String documento, String nombre, String apellidos,
+            Date fechaNacimiento, String genero, int edad ) {        
+        this.TID = TID;     
+        this.documento = documento;
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.fechaNacimiento = fechaNacimiento;        
+        this.genero = genero;      
+        this.edad = edad;
+    }  
    
 
     //Modificadores ***************

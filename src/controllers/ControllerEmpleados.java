@@ -12,6 +12,7 @@ import models.Empleado;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
@@ -33,14 +34,14 @@ public class ControllerEmpleados implements ActionListener {
     
 
     public ControllerEmpleados(Empresa empresa, FrmEmpleados vista) {
-        this.empresa = empresa;
-        this.empleado = empleado;
-        this.directivo = directivo;
+        this.empresa = empresa;        
         this.vista = vista;
         vista.btnGuardar2.addActionListener(this);
         vista.btnActualizar2.addActionListener(this);
         vista.btnCancelar2.addActionListener(this);
-        vista.btnEliminar2.addActionListener(this);        
+        vista.btnEliminar2.addActionListener(this);   
+        listarEmpleados();
+        disenoTabla();
     }
      
     @Override
@@ -54,6 +55,9 @@ public class ControllerEmpleados implements ActionListener {
             String genero = "";
             String subor = " ";
             Integer categoria = 0;
+            int idDir = 0;
+            int idEmpresa = 0;
+            
             int edad = 0;
             if (vista.checkSubordinado.isSelected()) { subor = "SI"; }
             if (vista.btnHombre.isSelected()) { genero = "H"; }
@@ -76,17 +80,17 @@ public class ControllerEmpleados implements ActionListener {
                 Double salario = Double.parseDouble(vista.txtSalario.getText());
                 // Determina si la casilla directivo fue seleccionada            
                 if (vista.checkDirectivo.isSelected()) {
-                    directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero , edad, salario, subor, categoria);
+                    directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero , edad, idEmpresa, salario, subor, idDir);
                     res = empresa.agregarEmpleado(directivo);
                 } else {
                     vista.txtCategoria.setEnabled(false);
-                    empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, edad, salario, subor);
+                    empleado = new Empleado(TID, doc, nombre, apel, fNac, genero, edad, idEmpresa, salario, subor, idDir);
                     res = empresa.agregarEmpleado(empleado);
                 }
 
                 if (res == true) {
                     JOptionPane.showMessageDialog(null, "Datos almacenados exitosamente.");
-                    obtenerListarEmpleados();
+                    listarEmpleados();
                     disenoTabla();
                     limpiarCampos();
                 } else {
@@ -105,6 +109,8 @@ public class ControllerEmpleados implements ActionListener {
             String subor = " ";
             Integer categoria = 0;
             int edad  = 0;
+            int idDir = 0;
+            int idEmpresa = 0;
 
             if (vista.checkSubordinado.isSelected()) { subor = "SI"; }
             if (vista.btnHombre.isSelected()) { genero = "H"; }
@@ -132,15 +138,15 @@ public class ControllerEmpleados implements ActionListener {
                     Double salario = Double.parseDouble(vista.txtSalario.getText());
                     // Determina si la casilla directivo fue seleccionada
                     if (vista.checkDirectivo.isSelected()) {
-                        directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero, edad, salario, subor, categoria);
+                        directivo = new Directivo(id, TID, doc, nombre, apel, fNac, genero , edad, idEmpresa, salario, subor, idDir);
                         res = empresa.modificarEmpleado(fila, empleado);
                     } else {
-                        empleado = new Empleado(id, TID, doc, nombre, apel, fNac, genero, edad, salario, subor);
+                        empleado = new Empleado(TID, doc, nombre, apel, fNac, genero, edad, idEmpresa, salario, subor, idDir);
                         res = empresa.modificarEmpleado(fila, empleado);
                     }
                     if (res == true) {
                         JOptionPane.showMessageDialog(null, "Datos Actualizados exitosamente.");
-                        obtenerListarEmpleados();
+                        listarEmpleados();
                         disenoTabla();
                         limpiarCampos();
                         inhabilitarCampos();
@@ -164,14 +170,14 @@ public class ControllerEmpleados implements ActionListener {
                     boolean res = empresa.eliminarEmpleado(fila);
                     if (res == true) {
                         JOptionPane.showMessageDialog(null, "Registro eliminado exitosamente.");
-                        obtenerListarEmpleados();
+                        listarEmpleados();
                         limpiarCampos();
                         habilitarCampos();
                     } else {
                         JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
                     }
                 }
-                obtenerListarEmpleados();
+                listarEmpleados();
                 disenoTabla();
                 limpiarCampos();
                 inhabilitarbotones();
@@ -183,77 +189,46 @@ public class ControllerEmpleados implements ActionListener {
             habilitarbotonesLimpiar();
             habilitarCampos();
             limpiarCampos();
+            disenoTabla();
         }
     }
-
-    /* FORMA DE SOBRESCRIBIR EL METODO DEL KEYTYPE PARA ESCUCHAR UN TEXTBOX
-    private void type(){
-        vista.txtSalario.addKeyListener(new KeyListener() {
-            @Override
-            public void keyTyped(KeyEvent evt) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void keyPressed(KeyEvent ke) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-
-            @Override
-            public void keyReleased(KeyEvent ke) {
-                throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-            }
-        });              
-    }*/
-    
-      
-    
-  /**********************************************************************************************************/  
-    
        
-    /**
-     * *
-     * Metodo para listar los clientes en la tabla
+    /***
+     * Metodo para listar los empleado en la tabla
      */
-    public void obtenerListarEmpleados() {
-
-        modelo = new DefaultTableModel();
-        modelo.addColumn("Id");
-        modelo.addColumn("Tid");
-        modelo.addColumn("Documento");
-        modelo.addColumn("Nombres");
-        modelo.addColumn("Apellidos");
-        modelo.addColumn("Fecha Nacimiento");
-        modelo.addColumn("Genero");
-        modelo.addColumn("Edad");
-        modelo.addColumn("Salario Neto");
-        modelo.addColumn("Directivo");
-        modelo.addColumn("Subordinado");
-        modelo.addColumn("Categoria");
-
-        String[] user = new String[12];
-
-        for (int i = 0; i < empresa.getEmpleados().size(); i++) {
-
-            user[0] = String.valueOf(empresa.getEmpleados().get(i).getId());
-            user[1] = String.valueOf(empresa.getEmpleados().get(i).getTID());
-            user[2] = String.valueOf(empresa.getEmpleados().get(i).getDocumento());
-            user[3] = String.valueOf(empresa.getEmpleados().get(i).getNombre());
-            user[4] = String.valueOf(empresa.getEmpleados().get(i).getApellidos());
-            user[5] = String.valueOf(empresa.getEmpleados().get(i).getFechaNacimiento());
-            user[6] = String.valueOf(empresa.getEmpleados().get(i).getGenero());
-            user[7] = String.valueOf(empresa.getEmpleados().get(i));
-            user[8] = String.valueOf(empresa.getEmpleados().get(i).getSalario());
-            user[9] = String.valueOf(empresa.getEmpleados().get(i).getSubordinado());
-            if (vista.txtCategoria.getText().equals("") || vista.txtCategoria.getText().equals("0")) {
+    public void listarEmpleados() {       
+        
+        ArrayList<Empleado> listaEmpleados = new ArrayList<>();
+        listaEmpleados = empresa.obtenerEmpleado(empresa);
+        
+        Object[][] matriz = new Object[listaEmpleados.size()][13];            
+        modelo = (DefaultTableModel) vista.tablaEmpleados.getModel();                    
+        
+        for (int i = 0; i < listaEmpleados.size(); i++){
+            matriz[i][0] = String.valueOf(listaEmpleados.get(i).getId());
+            matriz[i][1] = String.valueOf(listaEmpleados.get(i).getTID());
+            matriz[i][2] = String.valueOf(listaEmpleados.get(i).getDocumento());
+            matriz[i][3] = String.valueOf(listaEmpleados.get(i).getNombre());
+            matriz[i][4] = String.valueOf(listaEmpleados.get(i).getApellidos());
+            matriz[i][5] = String.valueOf(listaEmpleados.get(i).getFechaNacimiento());
+            matriz[i][6] = String.valueOf(listaEmpleados.get(i).getGenero());
+            matriz[i][7] = String.valueOf(listaEmpleados.get(i).getEdad());
+            matriz[i][8] = String.valueOf(listaEmpleados.get(i).getIdEmpresa());               
+            matriz[i][9] = String.valueOf(listaEmpleados.get(i).getIdEmpleado());               
+            matriz[i][10] = String.valueOf(listaEmpleados.get(i).getSalario());               
+            matriz[i][11] = String.valueOf(listaEmpleados.get(i).getSubordinado());               
+            matriz[i][12] = String.valueOf(listaEmpleados.get(i).getIdDirectivo());               
+        }            
+        vista.tablaEmpleados.setModel(new javax.swing.table.DefaultTableModel(
+            matriz,
+            new String [] {
+                "IdPersona", "Tid", "Documento", "Nombres", "Apellidos", "Fecha Nacimiento",
+                "Genero", "Edad", "IdEmpresa", "IdEmpleado", "Salario Neto", "Directivo", 
+                "Subordinado", "IdDirectivo"
                 
-            } else {
-                user[10] = String.valueOf(directivo.getCategoria());
             }
-            modelo.addRow(user);
-        }
-        vista.tablaEmpleados.setModel(modelo);
-    }
+        ));  
+    }    
 
     public void habilitarCampos() {
         vista.boxTID.setEnabled(true);
@@ -286,7 +261,7 @@ public class ControllerEmpleados implements ActionListener {
     }
 
     public void habilitarbotonesLimpiar() {
-        obtenerListarEmpleados();
+        listarEmpleados();
         disenoTabla();
         vista.btnGuardar2.setEnabled(true);
         vista.btnActualizar2.setEnabled(false);
@@ -319,7 +294,7 @@ public class ControllerEmpleados implements ActionListener {
         vista.txtCategoria.setEnabled(false);
     }
 
-    //Método para diseñar las columnas de la tabla Empresa
+    //Método para diseñar las columnas de la tabla Empleado
     void disenoTabla() {
         //Redimensionar el tamaño de las columnas de la tabla.        
         vista.tablaEmpleados.getColumnModel().getColumn(0).setMaxWidth(0);
@@ -354,18 +329,25 @@ public class ControllerEmpleados implements ActionListener {
         vista.tablaEmpleados.getColumnModel().getColumn(7).setMinWidth(50);
         vista.tablaEmpleados.getColumnModel().getColumn(7).setPreferredWidth(50);
         //.
-        vista.tablaEmpleados.getColumnModel().getColumn(8).setMaxWidth(130);
-        vista.tablaEmpleados.getColumnModel().getColumn(8).setMinWidth(130);
-        vista.tablaEmpleados.getColumnModel().getColumn(8).setPreferredWidth(130);
+        vista.tablaEmpleados.getColumnModel().getColumn(8).setMaxWidth(0);
+        vista.tablaEmpleados.getColumnModel().getColumn(8).setMinWidth(0);
+        vista.tablaEmpleados.getColumnModel().getColumn(8).setPreferredWidth(0);
         //De este modo se oculta la columna 
         vista.tablaEmpleados.getColumnModel().getColumn(9).setMaxWidth(0);
         vista.tablaEmpleados.getColumnModel().getColumn(9).setMinWidth(0);
         vista.tablaEmpleados.getColumnModel().getColumn(9).setPreferredWidth(0);
         //De este modo se oculta la columna 
-        vista.tablaEmpleados.getColumnModel().getColumn(9).setMaxWidth(0);
-        vista.tablaEmpleados.getColumnModel().getColumn(9).setMinWidth(0);
-        vista.tablaEmpleados.getColumnModel().getColumn(9).setPreferredWidth(0);
-
+        vista.tablaEmpleados.getColumnModel().getColumn(10).setMaxWidth(130);
+        vista.tablaEmpleados.getColumnModel().getColumn(10).setMinWidth(130);
+        vista.tablaEmpleados.getColumnModel().getColumn(10).setPreferredWidth(130);
+        //De este modo se oculta la columna 
+        vista.tablaEmpleados.getColumnModel().getColumn(11).setMaxWidth(0);
+        vista.tablaEmpleados.getColumnModel().getColumn(11).setMinWidth(0);
+        vista.tablaEmpleados.getColumnModel().getColumn(11).setPreferredWidth(0);
+        //De este modo se oculta la columna 
+        vista.tablaEmpleados.getColumnModel().getColumn(12).setMaxWidth(0);
+        vista.tablaEmpleados.getColumnModel().getColumn(12).setMinWidth(0);
+        vista.tablaEmpleados.getColumnModel().getColumn(12).setPreferredWidth(0);        
     }
     
 }

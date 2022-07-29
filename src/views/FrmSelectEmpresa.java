@@ -5,33 +5,21 @@
  */
 package views;
 
+import controllers.ControllerSelectEmpresa;
 import java.awt.event.KeyEvent;
-import models.Empresa;
-import static models.Empresa.*;
-import java.util.ArrayList;
-import javax.swing.JOptionPane;
-import javax.swing.table.DefaultTableModel;
-
 
 /**
  *
  * @author Q-USER
  */
 public class FrmSelectEmpresa extends javax.swing.JFrame {
-        
-    private DefaultTableModel modelo;    //Modelo por defecto de la Tabla
-   
+    
     /**
      * Creates new form Select
      */
     public FrmSelectEmpresa() {
-        
-        
         initComponents();        
-        ListarEmpresa();
-        disenoTabla();
-        lblBuscar.setVisible(false);
-        
+        ControllerSelectEmpresa ctrlSelectEmpresa = new ControllerSelectEmpresa(this);
         
         this.setLocationRelativeTo(null);
     }
@@ -127,11 +115,6 @@ public class FrmSelectEmpresa extends javax.swing.JFrame {
         btnAceptar.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         btnAceptar.setForeground(new java.awt.Color(255, 255, 255));
         btnAceptar.setText("Aceptar");
-        btnAceptar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAceptarActionPerformed(evt);
-            }
-        });
         jPanel1.add(btnAceptar, new org.netbeans.lib.awtextra.AbsoluteConstraints(380, 380, 170, 47));
 
         txtBuscar.setBackground(new java.awt.Color(255, 255, 255));
@@ -145,14 +128,9 @@ public class FrmSelectEmpresa extends javax.swing.JFrame {
                 txtBuscarFocusGained(evt);
             }
         });
-        txtBuscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtBuscarActionPerformed(evt);
-            }
-        });
         txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                txtBuscarKeyPressed(evt);
+            public void keyTyped(java.awt.event.KeyEvent evt) {
+                txtBuscarKeyTyped(evt);
             }
         });
         jPanel1.add(txtBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 240, 30));
@@ -162,11 +140,6 @@ public class FrmSelectEmpresa extends javax.swing.JFrame {
         btnBuscar.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         btnBuscar.setForeground(new java.awt.Color(255, 255, 255));
         btnBuscar.setText("Buscar");
-        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnBuscarActionPerformed(evt);
-            }
-        });
         jPanel1.add(btnBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 120, 170, 47));
 
         lblBuscar.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
@@ -178,11 +151,6 @@ public class FrmSelectEmpresa extends javax.swing.JFrame {
         btnVerDatos.setBorder(javax.swing.BorderFactory.createEmptyBorder(1, 1, 1, 1));
         btnVerDatos.setBorderPainted(false);
         btnVerDatos.setContentAreaFilled(false);
-        btnVerDatos.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnVerDatosActionPerformed(evt);
-            }
-        });
         jPanel1.add(btnVerDatos, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 380, -1, -1));
         jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 400, 140, 10));
 
@@ -200,169 +168,19 @@ public class FrmSelectEmpresa extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
-        
-        int fila = tablaEmpresas.getSelectedRow();
-        
-        if (fila < 0) {
-            JOptionPane.showMessageDialog(null, "No ha seleccionado una empresa.");
-        } else {
-            int id = Integer.valueOf((String)tablaEmpresas.getValueAt(fila, 0));            
-            String NIT = (String)tablaEmpresas.getValueAt(fila, 1);
-            String nombre = (String)tablaEmpresas.getValueAt(fila, 2);
-            String telefono = (String)tablaEmpresas.getValueAt(fila, 3);
-            String direccion = (String)tablaEmpresas.getValueAt(fila, 4);
-            String email = (String)tablaEmpresas.getValueAt(fila, 5);
-            String actEconomica = (String)tablaEmpresas.getValueAt(fila, 6);
-            Empresa empresa = new Empresa(id, NIT, nombre, telefono, direccion, email, actEconomica);
-            FrmMenu ventana = new FrmMenu(empresa);                        
-            ventana.show(); 
-            dispose();
-        }
-        
-    }//GEN-LAST:event_btnAceptarActionPerformed
-
-    private void txtBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtBuscarActionPerformed
-        txtBuscar.requestFocus();
-        
-    }//GEN-LAST:event_txtBuscarActionPerformed
-
     private void txtBuscarFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtBuscarFocusGained
         txtBuscar.setText("");
         lblBuscar.setVisible(true);
     }//GEN-LAST:event_txtBuscarFocusGained
 
-    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
-        buscarNit();
-        disenoTabla();
-    }//GEN-LAST:event_btnBuscarActionPerformed
-
-    private void txtBuscarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyPressed
-         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-            //btnAceptar.requestFocus();
-            buscarNit();
-            disenoTabla();
+    private void txtBuscarKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyTyped
+        char car = evt.getKeyChar();
+        //Permite validar que solo se ingresen datos numéricos.
+        if((car < '0' || car > '9') && (car != (char)KeyEvent.VK_DELETE)){
+            evt.consume();
         }
-    }//GEN-LAST:event_txtBuscarKeyPressed
-
-    private void btnVerDatosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVerDatosActionPerformed
-        verInfo();
-    }//GEN-LAST:event_btnVerDatosActionPerformed
-
-    /***
-     * Metodo para listar los clientes en la tabla
-     */
-    private void ListarEmpresa() {       
-        
-        ArrayList<Empresa> listaEmpresas = new ArrayList<>();
-        
-        listaEmpresas = obtenerEmpresas();
-        
-        Object[][] matriz = new Object[listaEmpresas.size()][7];            
-        modelo = (DefaultTableModel) tablaEmpresas.getModel();            
-        
-        for (int i = 0; i < listaEmpresas.size(); i++){
-            matriz[i][0] = String.valueOf(listaEmpresas.get(i).getId());
-            matriz[i][1] = String.valueOf(listaEmpresas.get(i).getNIT());
-            matriz[i][2] = String.valueOf(listaEmpresas.get(i).getNombre());
-            matriz[i][3] = String.valueOf(listaEmpresas.get(i).getTelfono());
-            matriz[i][4] = String.valueOf(listaEmpresas.get(i).getDireccion());
-            matriz[i][5] = String.valueOf(listaEmpresas.get(i).getEmail());
-            matriz[i][6] = String.valueOf(listaEmpresas.get(i).getActEconomica());
-                                             
-        }            
-        tablaEmpresas.setModel(new javax.swing.table.DefaultTableModel(
-            matriz,
-            new String [] {
-                "Id", "NIT", "Nombre", "Teléfono", "Dirección", "Email",
-                "Actividad Económica"
-            }
-        ));  
-    }
+    }//GEN-LAST:event_txtBuscarKeyTyped
     
-     private void buscarNit() {
-         
-        ArrayList<Empresa> listaEmpresa = new ArrayList<>();
-        
-        listaEmpresa = buscarEmpresa();        
-         
-        if (txtBuscar.getText().equals("Buscar NIT") || listaEmpresa.isEmpty() || txtBuscar.getText().equals("")) {
-             JOptionPane.showMessageDialog(null, "No se encontró ningún resultado");
-             ListarEmpresa();
-        } else {
-            Object[][] matriz = new Object[listaEmpresa.size()][7];            
-            modelo = (DefaultTableModel) tablaEmpresas.getModel();            
-
-            for (int i = 0; i < listaEmpresa.size(); i++){
-                matriz[i][0] = String.valueOf(listaEmpresa.get(i).getId());
-                matriz[i][1] = String.valueOf(listaEmpresa.get(i).getNIT());
-                matriz[i][2] = String.valueOf(listaEmpresa.get(i).getNombre());
-                matriz[i][3] = String.valueOf(listaEmpresa.get(i).getTelfono());
-                matriz[i][4] = String.valueOf(listaEmpresa.get(i).getDireccion());
-                matriz[i][5] = String.valueOf(listaEmpresa.get(i).getEmail());
-                matriz[i][6] = String.valueOf(listaEmpresa.get(i).getActEconomica());
-
-            }            
-            tablaEmpresas.setModel(new javax.swing.table.DefaultTableModel(
-                matriz,
-                new String [] {
-                    "Id", "NIT", "Nombre", "Teléfono", "Dirección", "Email",
-                    "Actividad Económica"
-                }
-            ));  
-        }
-    }
-     
-    private void verInfo() {
-       int fila = tablaEmpresas.getSelectedRow();
-       
-       if (fila < 0) {
-            JOptionPane.showMessageDialog(null, "No ha seleccionado una empresa.");
-        } else {
-           int id = Integer.valueOf((String)tablaEmpresas.getValueAt(fila, 0));            
-            String NIT = (String)tablaEmpresas.getValueAt(fila, 1);
-            String nombre = (String)tablaEmpresas.getValueAt(fila, 2);
-            String telefono = (String)tablaEmpresas.getValueAt(fila, 3);
-            String direccion = (String)tablaEmpresas.getValueAt(fila, 4);
-            String email = (String)tablaEmpresas.getValueAt(fila, 5);
-            String actEconomica = (String)tablaEmpresas.getValueAt(fila, 6);
-            Empresa empresa = new Empresa(id, NIT, nombre, telefono, direccion, email, actEconomica);
-            FrmInfoEmpresa ventana = new FrmInfoEmpresa(empresa);                        
-            ventana.show();             
-       }
-    } 
-     
-    //Método para diseñar las columnas de la tabla Cliente
-    void disenoTabla() {
-        //Redimensionar el tamaño de las columnas de la tabla.        
-        tablaEmpresas.getColumnModel().getColumn(0).setMaxWidth(0);
-        tablaEmpresas.getColumnModel().getColumn(0).setMinWidth(0);
-        tablaEmpresas.getColumnModel().getColumn(0).setPreferredWidth(0);
-        //.
-        tablaEmpresas.getColumnModel().getColumn(1).setMaxWidth(205);
-        tablaEmpresas.getColumnModel().getColumn(1).setMinWidth(205);
-        tablaEmpresas.getColumnModel().getColumn(1).setPreferredWidth(205);
-        //.
-        tablaEmpresas.getColumnModel().getColumn(2).setMaxWidth(280);
-        tablaEmpresas.getColumnModel().getColumn(2).setMinWidth(280);
-        tablaEmpresas.getColumnModel().getColumn(2).setPreferredWidth(280);
-        //.De este modo se oculta la columna 
-        tablaEmpresas.getColumnModel().getColumn(3).setMaxWidth(0);
-        tablaEmpresas.getColumnModel().getColumn(3).setMinWidth(0);
-        tablaEmpresas.getColumnModel().getColumn(3).setPreferredWidth(0);
-        //De este modo se oculta la columna 
-        tablaEmpresas.getColumnModel().getColumn(4).setMaxWidth(0);
-        tablaEmpresas.getColumnModel().getColumn(4).setMinWidth(0);
-        tablaEmpresas.getColumnModel().getColumn(4).setPreferredWidth(0);
-        //De este modo se oculta la columna 
-        tablaEmpresas.getColumnModel().getColumn(5).setMaxWidth(0);
-        tablaEmpresas.getColumnModel().getColumn(5).setMinWidth(0);
-        tablaEmpresas.getColumnModel().getColumn(5).setPreferredWidth(0);
-        //De este modo se oculta la columna 
-        tablaEmpresas.getColumnModel().getColumn(6).setMaxWidth(0);
-        tablaEmpresas.getColumnModel().getColumn(6).setMinWidth(0);
-        tablaEmpresas.getColumnModel().getColumn(6).setPreferredWidth(0);      
-    }
        
     /**
      * @param args the command line arguments
@@ -380,31 +198,13 @@ public class FrmSelectEmpresa extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(FrmSelectEmpresa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(FrmSelectEmpresa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(FrmSelectEmpresa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(FrmSelectEmpresa.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
         //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
-        //</editor-fold>
+        
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -418,7 +218,7 @@ public class FrmSelectEmpresa extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     public javax.swing.JButton btnAceptar;
     public javax.swing.JButton btnBuscar;
-    private javax.swing.JButton btnVerDatos;
+    public javax.swing.JButton btnVerDatos;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -426,8 +226,8 @@ public class FrmSelectEmpresa extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
-    private javax.swing.JLabel lblBuscar;
-    private javax.swing.JTable tablaEmpresas;
+    public javax.swing.JLabel lblBuscar;
+    public javax.swing.JTable tablaEmpresas;
     public static javax.swing.JTextField txtBuscar;
     // End of variables declaration//GEN-END:variables
 

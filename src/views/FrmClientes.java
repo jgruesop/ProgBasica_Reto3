@@ -297,11 +297,6 @@ public class FrmClientes extends javax.swing.JInternalFrame {
         btnGuardar.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         btnGuardar.setText("Enviar");
         btnGuardar.setBorderPainted(false);
-        btnGuardar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnGuardarActionPerformed(evt);
-            }
-        });
 
         btnCancelar.setBackground(new java.awt.Color(153, 0, 0));
         btnCancelar.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
@@ -458,21 +453,14 @@ public class FrmClientes extends javax.swing.JInternalFrame {
         //Permite validar que solo se ingresen datos numéricos.
         if((car < '0' || car > '9') && (car != (char)KeyEvent.VK_DELETE)){
             evt.consume();
-        }
-        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {            
-            txtDoc.requestFocus();
-        }
+        }        
     }//GEN-LAST:event_txtBuscarKeyTyped
 
     private void txtBuscarKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtBuscarKeyPressed
-         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             //btnAceptar.requestFocus();            
         }
     }//GEN-LAST:event_txtBuscarKeyPressed
-
-    private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_btnGuardarActionPerformed
     
    
     // Variables declaration - do not modify//GEN-BEGIN:variables

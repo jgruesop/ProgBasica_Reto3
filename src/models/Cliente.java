@@ -17,7 +17,8 @@ import java.util.Date;
  */
 public class Cliente extends Persona {
     
-    private int idCliente;    
+    private int idCliente;  
+    public int idEmpresa;
     private String telefono;
     private String email;
     private String direccion;
@@ -39,12 +40,28 @@ public class Cliente extends Persona {
      */
     public Cliente( int id, String TID, String documento, String nombre, String apellidos, 
             Date fechaNacimiento, String genero, int edad, int idCliente, String telefono, 
-            String direccion, String email) {
+            String direccion, String email, int idEmpresa) {
         super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);
         this.idCliente = idCliente;
         this.telefono = telefono;
         this.direccion = direccion;
         this.email = email;        
+    }
+    
+    public Cliente(String TID, String documento, String nombre, String apellidos, 
+            Date fechaNacimiento, String genero, int edad, int idCliente, String telefono, 
+            String direccion, String email, int idEmpresa) {
+        super(TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);
+        this.idCliente = idCliente;
+        this.telefono = telefono;
+        this.direccion = direccion;
+        this.email = email;        
+        this.idEmpresa = idEmpresa;
+    }
+    
+     public Cliente(int id, String TID, String documento, String nombre, String apellidos, 
+            Date fechaNacimiento, String genero, int edad) {
+        super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);        
     }
 
     /**
@@ -126,4 +143,18 @@ public class Cliente extends Persona {
     public void setIdCliente(int id) {
         this.idCliente = id;
     }    
+
+    /**
+     * @return the idEmpresa
+     */
+    public int getIdEmpresa() {
+        return idEmpresa;
+    }
+
+    /**
+     * @param idEmpresa the idEmpresa to set
+     */
+    public void setIdEmpresa(int idEmpresa) {
+        this.idEmpresa = idEmpresa;
+    }
 }
