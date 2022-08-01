@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import views.FrmSelectEmpresa;
 import views.FrmClientes;
+import views.FrmEmpleados;
 
 /**
  *
@@ -310,8 +311,8 @@ public class Empresa {
                     + "p.fechaNac, p.genero, TIMESTAMPDIFF(YEAR, p.fechaNac, CURRENT_DATE()) AS edad, "
                     + "c.id_cliente, c.telefono, c.direccion, c.email, c.id_empresa_reg "
                     + " FROM persona p "
-                    + " LEFT OUTER JOIN cliente c ON p.id_persona = c.id_persona "
-                    + " JOIN empresa_cliente ec ON c.id_empresa_reg = ec.id_empresa "
+                    + " LEFT JOIN cliente c ON p.id_persona = c.id_persona "
+                    + " LEFT JOIN empresa_cliente ec ON c.id_empresa_reg = ec.id_empresa "
                     + " WHERE p.documento LIKE '%" + buscar + "%' ");                        
 
             //query.setInt(1, empresa.getId());        
@@ -526,14 +527,16 @@ public class Empresa {
         
         try {
             PreparedStatement query = ConexionBD.obtener().prepareStatement(""
-                    + "SELECT "
+                    + "SELECT DISTINCT "
                     + "p.id_persona, p.tid, p.documento, p.nombres, p.apellidos, "
                     + "p.fechaNac, p.genero, TIMESTAMPDIFF(YEAR, p.fechaNac, CURRENT_DATE()) AS edad, "                    
-                    + "em.id_empleado, em.salario, em.subordinado, em.id_empresa_reg, em.id_directivo "
+                    + "em.id_empleado, em.salario, em.subordinado, em.id_empresa_reg, em.id_directivo, "
+                    + "d.id_directivo, d.categoria "
                     + " FROM persona p "                    
                     + " INNER JOIN empleado em ON p.id_persona = em.id_persona "
                     + " INNER JOIN empresa_empleado ec ON em.id_empresa_reg = ec.id_empresa "
-                    + " LEFT JOIN empresa e ON ec.id_empresa = e.id_empresa "                    
+                    + " LEFT JOIN empresa e ON ec.id_empresa = e.id_empresa "
+                    + " LEFT JOIN directivo d ON em.id_empleado = d.id_empleado "                    
                     + " WHERE e.id_empresa = ? ");
             
             query.setInt(1, empresa.getId());                                    
@@ -545,15 +548,11 @@ public class Empresa {
                         res.getDate("p.fechaNac"), res.getString("p.genero"), res.getInt("edad"),
                         res.getInt("em.id_empresa_reg"),res.getInt("em.id_empleado"), res.getDouble("em.salario"), 
                         res.getString("em.subordinado"), res.getInt("em.id_directivo")));                
-            }                        
-           
-             
+            }    
         } catch(SQLException e){
             System.out.println(e.getMessage());
         }
-        for (Empleado empleado : listarEmpleados) {
-                System.out.println(empleado);
-        }
+        
         return listarEmpleados;
     }
     
@@ -563,11 +562,59 @@ public class Empresa {
      * @return true or false
      * Metodo que permite agregar un empleado de la lista
      */
-    public boolean agregarEmpleado(Empleado empleado) {
-        try {
-            this.empleados.add(empleado);
-            return true;
-        } catch (Exception e) {
+    public boolean agregarEmpleado(Empresa empresa, Empleado empleado) {
+        try {            
+            String query = ("INSERT INTO persona(tid, documento, nombres, apellidos, "
+                    + "fechaNac, genero) VALUES (?, ?, ?, ?, ?, ?)");
+            PreparedStatement stPersona = ConexionBD.obtener().prepareStatement
+                                        (query, Statement.RETURN_GENERATED_KEYS);            
+            stPersona.setString(1, empleado.getTID());
+            stPersona.setString(2, empleado.getDocumento());
+            stPersona.setString(3, empleado.getNombre());
+            stPersona.setString(4, empleado.getApellidos());            
+            stPersona.setDate(5, (java.sql.Date) empleado.getFechaNacimiento());
+            stPersona.setString(6, empleado.getGenero());
+            int filaInsertada = stPersona.executeUpdate();
+            if (filaInsertada > 0) {
+                ResultSet llavePrimariaPersona = stPersona.getGeneratedKeys();
+                if (llavePrimariaPersona.next()) {
+                    int idPersona = llavePrimariaPersona.getInt(1);
+                    query = ("INSERT INTO empleado(salario, subordinado, id_persona, id_empresa_reg, id_directivo) VALUES ( ?, ?, ?, ?, ?)");
+                    PreparedStatement stEmpleado = ConexionBD.obtener().prepareStatement
+                                                (query, Statement.RETURN_GENERATED_KEYS);
+                    stEmpleado.setDouble(1, empleado.getSalario());
+                    stEmpleado.setString(2, empleado.getSubordinado());
+                    stEmpleado.setInt(3, idPersona);                    
+                    stEmpleado.setInt(4, empresa.getId());
+                    stEmpleado.setInt(5, empleado.idDirectivo);
+                    filaInsertada = stEmpleado.executeUpdate();
+                    String dir = String.valueOf(empleado.getIdDirectivo());
+                    if (filaInsertada > 0 ) {
+                        ResultSet llavePrimariaCliente = stEmpleado.getGeneratedKeys();                                                
+                        if (llavePrimariaCliente.next()) {
+                            int idEmpleado = llavePrimariaCliente.getInt(1);                            
+                            System.out.println(dir);
+                            if (!dir.isEmpty() && !dir.equals("0")) {
+                                query = "INSERT INTO directivo(categoria, id_empleado) VALUES (?, ?)";
+                                PreparedStatement stDirectivo = ConexionBD.obtener().prepareStatement(query);
+                                stDirectivo.setInt(1, empleado.getIdDirectivo());
+                                stDirectivo.setInt(2, idEmpleado);
+                                stDirectivo.executeUpdate();
+                            }                            
+                            query = "INSERT INTO empresa_empleado(id_empresa, id_empleado) VALUES (?, ?)";
+                            PreparedStatement stEmpresa_Cliente = ConexionBD.obtener().prepareStatement(query);
+                            stEmpresa_Cliente.setInt(1, empresa.getId());
+                            stEmpresa_Cliente.setInt(2, idEmpleado);
+                            filaInsertada = stEmpresa_Cliente.executeUpdate();
+                            if (filaInsertada > 0) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+            return false;            
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
         }
@@ -579,11 +626,27 @@ public class Empresa {
      * @return true or false
      * Metodo que permite eliminar un empleado a la lista
      */
-    public boolean eliminarEmpleado(int indiceEmpleado) {
-        try {
-            this.empleados.remove(indiceEmpleado);
-            return true;
-        } catch (Exception e) {
+    public boolean eliminarEmpleado(int indiceEmpleado, Empleado empleado, Empresa empresa) {
+       try {
+            String query = "DELETE FROM empresa_empleado WHERE id_empresa = ? AND id_empleado = ?";
+            PreparedStatement stEmpresa_Empleado = ConexionBD.obtener().prepareStatement(query);
+            stEmpresa_Empleado.setInt(1, empresa.getId());
+            stEmpresa_Empleado.setInt(2, empleado.getIdEmpleado());                       
+            
+            String queryEmpleado = ("DELETE FROM empleado WHERE id_empleado = ? AND id_empresa_reg = ?");
+            PreparedStatement stEmpleado = ConexionBD.obtener().prepareStatement(queryEmpleado);                                          
+            stEmpleado.setInt(1, empleado.getIdEmpleado());                                    
+            stEmpleado.setInt(2, empresa.getId());
+
+            String queryDirectivo = ("DELETE FROM directivo WHERE id_empleado = ?");
+            PreparedStatement stDirectivo = ConexionBD.obtener().prepareStatement(queryDirectivo);                                          
+            stDirectivo.setInt(1, empleado.getIdEmpleado());                                                
+                       
+            stDirectivo.executeUpdate();
+            int filaEliminadaEmpresa_Empleado = stEmpresa_Empleado.executeUpdate();
+            int filaEliminadaEmpleado = stEmpleado.executeUpdate();
+            return filaEliminadaEmpresa_Empleado > 0 || filaEliminadaEmpleado > 0;
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
         }
@@ -596,17 +659,184 @@ public class Empresa {
      * @return true or false
      * Metodo que permite modificar un empleado de la lista
      */
-    public boolean modificarEmpleado(int indiceEmpleado, Empleado empleado) {
+    public boolean modificarEmpleado(Empleado empleado, Empresa empresa) {
         try {
-            this.empleados.set(indiceEmpleado, empleado);
-            return true;
-        } catch (Exception e) {
+            String comparador_empresaEmpleado = "";        
+            String dir = String.valueOf(empleado.getIdDirectivo());
+            //Verifica si existe un registro con la empresa seleccionada
+            String queryEmpresa_Empresa = "SELECT * FROM empresa_empleado ee WHERE ee.id_empresa = ? AND ee.id_empleado = ?;";
+            PreparedStatement stEmpresa_Empleado = ConexionBD.obtener().prepareStatement(queryEmpresa_Empresa);
+            stEmpresa_Empleado.setInt(1, empresa.getId());
+            stEmpresa_Empleado.setInt(2, empleado.getIdEmpleado());
+            ResultSet res = stEmpresa_Empleado.executeQuery();
+            
+            if (res.next()) {
+                comparador_empresaEmpleado = res.getString("id_empresa_empleado");                
+            }
+            
+            String comparador = "";
+            //Verifica si existe un registro con la empresa seleccionada
+            String queryEmpleado = "SELECT * FROM empleado em WHERE em.id_empresa_reg = ? AND em.id_empleado = ?;";
+            PreparedStatement stEmpleado = ConexionBD.obtener().prepareStatement(queryEmpleado);
+            stEmpleado.setInt(1, empresa.getId());
+            stEmpleado.setInt(2, empleado.getIdEmpleado());
+            ResultSet ress = stEmpleado.executeQuery();            
+            
+            if (ress.next()) {
+                comparador = ress.getString("id_empleado");                
+            }
+            
+            String comparadorDir = "";
+            //Verifica si existe un registro con la empresa seleccionada
+            String queryDirectivo1 = "SELECT * FROM directivo d WHERE d.id_empleado = ?;";
+            PreparedStatement stDir1 = ConexionBD.obtener().prepareStatement(queryDirectivo1);            
+            stDir1.setInt(1, empleado.getIdEmpleado());
+            ResultSet resDir = stDir1.executeQuery();            
+            
+            if (resDir.next()) {
+                comparadorDir = resDir.getString("id_directivo");                
+            }
+                        
+            //Crea una nueva inserción si no existe con la empresa seleccionada
+            if (comparador.isEmpty() || comparador_empresaEmpleado.isEmpty()) {            
+                String query = ("INSERT INTO empleado(salario, subordinado, id_persona, id_empresa_reg, id_directivo) VALUES ( ?, ?, ?, ?, ?)");
+                    PreparedStatement stEmpleado1 = ConexionBD.obtener().prepareStatement
+                                                (query, Statement.RETURN_GENERATED_KEYS);
+                    stEmpleado1.setDouble(1, empleado.getSalario());
+                    stEmpleado1.setString(2, empleado.getSubordinado());
+                    stEmpleado1.setInt(3, empleado.getId());                    
+                    stEmpleado1.setInt(4, empresa.getId());
+                    stEmpleado1.setInt(5, empleado.getIdDirectivo());
+                    int filaInsertada = stEmpleado1.executeUpdate();
+                    if (filaInsertada > 0 ) {
+                        ResultSet llavePrimariaCliente = stEmpleado1.getGeneratedKeys();                                                
+                        if (llavePrimariaCliente.next()) {
+                            int idEmpleado = llavePrimariaCliente.getInt(1);                            
+                            System.out.println(dir);
+                            if (!dir.equals("0")) {
+                                String queryDir = "INSERT INTO directivo(categoria, id_empleado) VALUES (?, ?)";
+                                PreparedStatement stDirectivo = ConexionBD.obtener().prepareStatement(queryDir);
+                                stDirectivo.setInt(1, empleado.getIdDirectivo());
+                                stDirectivo.setInt(2, idEmpleado);
+                                stDirectivo.executeUpdate();
+                            }                            
+                            query = "INSERT INTO empresa_empleado(id_empresa, id_empleado) VALUES (?, ?)";
+                            PreparedStatement stEmpresa_Empleado1 = ConexionBD.obtener().prepareStatement(query);
+                            stEmpresa_Empleado1.setInt(1, empresa.getId());
+                            stEmpresa_Empleado1.setInt(2, idEmpleado);
+                            filaInsertada = stEmpresa_Empleado1.executeUpdate();
+                        if (filaInsertada > 0) {
+                            return true;
+                        }
+                    }
+                }
+            } else {                
+                String queryEmpleado1 = ("UPDATE empleado SET salario = ?, subordinado = ?,  id_directivo = ? WHERE id_empleado = ?");
+                PreparedStatement stEmpleado1 = ConexionBD.obtener().prepareStatement(queryEmpleado1);
+                stEmpleado1.setDouble(1, empleado.getSalario());
+                stEmpleado1.setString(2, empleado.getSubordinado());
+                stEmpleado1.setInt(3, empleado.getIdDirectivo());                                        
+                stEmpleado1.setInt(4, empleado.getIdEmpleado());
+                
+                String queryDir = "UPDATE directivo SET categoria = ?, id_empleado = ? WHERE id_empleado = ?";
+                PreparedStatement stDir = ConexionBD.obtener().prepareStatement(queryDir);
+                stDir.setInt(1, empleado.getIdDirectivo());
+                stDir.setInt(2, empleado.getIdEmpleado());
+                stDir.setInt(3, empleado.getIdEmpleado());
+                
+                stDir.executeUpdate();
+                stEmpleado1.executeUpdate();                
+            }
+            
+            if (empleado.getIdDirectivo() == 0) {
+                String queryDirectivo = ("DELETE FROM directivo WHERE id_empleado = ?");
+                PreparedStatement stDirectivo = ConexionBD.obtener().prepareStatement(queryDirectivo);                                          
+                stDirectivo.setInt(1, empleado.getIdEmpleado());  
+                stDirectivo.executeUpdate();
+            }
+            
+            if (!dir.equals("0") && comparadorDir.equals("")) {
+                String queryDir = "INSERT INTO directivo(categoria, id_empleado) VALUES (?, ?)";
+                PreparedStatement stDirectivo = ConexionBD.obtener().prepareStatement(queryDir);
+                stDirectivo.setInt(1, empleado.getIdDirectivo());
+                stDirectivo.setInt(2, empleado.getIdEmpleado());
+                stDirectivo.executeUpdate();
+            } 
+            
+            String queryPersona = ("UPDATE persona SET tid = ?, documento = ?, nombres = ?, "
+                    + "apellidos = ?, fechaNac = ?, genero = ? WHERE id_persona = ?");
+            PreparedStatement stPersona = ConexionBD.obtener().prepareStatement(queryPersona);
+            stPersona.setString(1, empleado.getTID());
+            stPersona.setString(2, empleado.getDocumento());
+            stPersona.setString(3, empleado.getNombre());
+            stPersona.setString(4, empleado.getApellidos());            
+            stPersona.setDate(5, (java.sql.Date) empleado.getFechaNacimiento());
+            stPersona.setString(6, empleado.getGenero());
+            stPersona.setInt(7, empleado.getId());
+                        
+            int filaInsertadaPersona = stPersona.executeUpdate();
+            
+            return filaInsertadaPersona > 0;            
+        
+         } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    }    
+    
+    public ArrayList<Empleado> buscarEmpleados(Empresa empresa){
+        
+        ArrayList<Empleado> buscarDocumento = new ArrayList<>();
+        String buscar = FrmEmpleados.txtBuscar.getText();
+                    
+        try{
+            PreparedStatement query = ConexionBD.obtener().prepareStatement(""
+                    + "SELECT "
+                    + "p.id_persona, p.tid, p.documento, p.nombres, p.apellidos, "
+                    + "p.fechaNac, p.genero, TIMESTAMPDIFF(YEAR, p.fechaNac, CURRENT_DATE()) AS edad, "
+                    + "em.id_empleado, em.salario, em.subordinado, em.id_empresa_reg, em.id_directivo, "
+                    + "d.id_directivo, d.categoria "
+                    + " FROM persona p "
+                    + " LEFT JOIN empleado em ON p.id_persona = em.id_persona "
+                    + " LEFT JOIN empresa_empleado ee ON em.id_empresa_reg = ee.id_empresa "
+                    + " LEFT JOIN directivo d ON em.id_empleado = d.id_empleado "  
+                    + " WHERE p.documento LIKE '%" + buscar + "%' ");                        
+
+            //query.setInt(1, empresa.getId());        
+            ResultSet res = query.executeQuery();
+                        
+            if(res.next()){
+                buscarDocumento.add(new Empleado(res.getInt("p.id_persona"), res.getString("p.tid"), 
+                        res.getString("p.documento"), res.getString("p.nombres"), res.getString("p.apellidos"), 
+                        res.getDate("p.fechaNac"), res.getString("p.genero"), res.getInt("edad"),
+                        res.getInt("em.id_empresa_reg"),res.getInt("em.id_empleado"), res.getDouble("em.salario"), 
+                        res.getString("em.subordinado"), res.getInt("em.id_directivo"))); 
+            }
+            
+            return buscarDocumento;
+        }catch (SQLException e){  
+            System.out.println(e.getMessage());
+        }
+        return buscarDocumento;
+    }
+    
+    public boolean duplicados(Empleado empleado) {        
+        try {
+            String bandera = "";
+            String query2 = ("SELECT * FROM persona WHERE documento = ?"); 
+            PreparedStatement stPersona2 = ConexionBD.obtener().prepareStatement(query2);
+            stPersona2.setString(1, empleado.getDocumento());
+            
+            ResultSet res = stPersona2.executeQuery();
+            
+            while(res.next()){
+                bandera = res.getString("documento");
+            }
+            return !bandera.isEmpty();
+        } catch (SQLException e) {
             System.out.println(e.getMessage());
             return false;
         }
     }    
 
-    
-
-    
 }

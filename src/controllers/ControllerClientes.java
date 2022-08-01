@@ -41,9 +41,9 @@ public class ControllerClientes implements ActionListener {
         this.vista = vista;
         this.empresa = empresa;
         FrmClientes.btnGuardar.addActionListener(this);
-        vista.btnActualizar.addActionListener(this);
-        vista.btnCancelar.addActionListener(this);
-        vista.btnEliminar.addActionListener(this);
+        FrmClientes.btnActualizar.addActionListener(this);
+        FrmClientes.btnCancelar.addActionListener(this);
+        FrmClientes.btnEliminar.addActionListener(this);
         vista.btnBuscar.addActionListener(this);
         FrmClientes.tablaClientes.getTableHeader().setReorderingAllowed(false);//Bloquea el movimiento de las columnas, e impide imvertir la información.
         inhabilitarbotones();        
@@ -172,7 +172,7 @@ public class ControllerClientes implements ActionListener {
                 JOptionPane.showMessageDialog(null, "Seleccionar el registro de la tabla");
             } else {   
                 if (comp1 || comp2) {
-                    JOptionPane.showMessageDialog(null, "No es posible aplicar esa acción.");
+                    JOptionPane.showMessageDialog(null, "La acción seleccionada no tiene efecto.");
                 } else {      
                     int op = JOptionPane.showConfirmDialog(null, "Esta seguro de eliminar el registro?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                     if (op == JOptionPane.YES_OPTION) { 
@@ -194,12 +194,7 @@ public class ControllerClientes implements ActionListener {
                             JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
                         }                    
                     }
-                }
-//                listarClientes();
-//                disenoTabla();
-//                limpiarCampos();
-//                habilitarCampos();                       
-//                inhabilitarbotones();                
+                }              
             }             
         }
         

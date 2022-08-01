@@ -36,6 +36,7 @@ public class ControllerSelectEmpresa implements ActionListener {
         vista.btnAceptar.addActionListener(this);
         vista.btnBuscar.addActionListener(this);
         vista.btnVerDatos.addActionListener(this);
+        vista.setLocationRelativeTo(null);
     }
     
     

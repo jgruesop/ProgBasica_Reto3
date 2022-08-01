@@ -49,7 +49,11 @@ public class Persona {
         this.genero = genero;      
         this.edad = edad;
     }  
+
+    public Persona() {
+    }
    
+    
 
     //Modificadores ***************
     /**

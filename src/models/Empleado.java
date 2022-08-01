@@ -19,7 +19,7 @@ public class Empleado extends Persona {
     
     //Contructor
 
-    public Empleado( int id, String TID, String documento, 
+    public Empleado(int id, String TID, String documento, 
             String nombre, String apellidos, Date fechaNacimiento, String genero, int edad,
             int idEmpresa, int idEmpleado, Double salario, String subordinado, int idDirectivo ) {
         super(id, TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);
@@ -43,6 +43,9 @@ public class Empleado extends Persona {
     public Empleado(String TID, String documento, 
             String nombre, String apellidos, Date fechaNacimiento, String genero, int edad) {
         super(TID, documento, nombre, apellidos, fechaNacimiento, genero, edad);        
+    }
+
+    public Empleado() {
     }
     
    
