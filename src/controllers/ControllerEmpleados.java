@@ -78,47 +78,57 @@ public class ControllerEmpleados implements ActionListener {
                     if (salario <= 0.0 ) {
                         JOptionPane.showMessageDialog(null, "Valor del salario no permitido ");             
                     } else {
-                        if (FrmEmpleados.checkSubordinado.isSelected() && subor.equals("SI")) {
-                            JOptionPane.showMessageDialog(null, "Un empleado subordinado no puede ser directivo.");
+                        if (FrmEmpleados.checkSubordinado.isSelected() && FrmEmpleados.checkDirectivo.isSelected()) {
+                            JOptionPane.showMessageDialog(null, "Un empleado solo puede ser subordinado o directivo.");
                         } else {
-                            // Determina si la casilla directivo fue seleccionada            
-                            if (FrmEmpleados.checkDirectivo.isSelected() && FrmEmpleados.cboxDir.getSelectedIndex() == 0) { 
-                               JOptionPane.showMessageDialog(null, "Debe seleccionar un directivo diferente de cero");                                                                
+                            if (!FrmEmpleados.checkSubordinado.isSelected() && !FrmEmpleados.checkDirectivo.isSelected()) {
+                                JOptionPane.showMessageDialog(null, "Un empleado debe puede ser subordinado o directivo.");
                             }else {
-                                //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
-                                sqlPackageDate = new java.sql.Date(FrmEmpleados.txtFechaNac.getDate().getTime());
-                                /// Da formato a la fecha obtenida en la linea anterior
-                                Date fNac = sqlPackageDate;    
-                                //FrmEmpleados.txtCategoria.setEnabled(false);
-                                empleado = new Empleado(tid, doc, nombre, apel, fNac, genero, edad, idEmpresa, salario, subor, idDir);
-                                boolean res1 = empresa.duplicados(empleado);
-                                if (res1 == true) {
-                                    JOptionPane.showMessageDialog(null, "Ya existe un empleado con el documento " + doc);                                
-                                } else {
-                                    res = empresa.agregarEmpleado(empresa, empleado);
-                                    if (res == true) {
-                                        JOptionPane.showMessageDialog(null, "Datos almacenados exitosamente.");
-                                        listarEmpleados();
-                                        disenoTabla();
-                                        limpiarCampos();
+                                // Determina si la casilla directivo fue seleccionada            
+                                if (FrmEmpleados.checkDirectivo.isSelected() && FrmEmpleados.cboxDir.getSelectedIndex() == 0 ||
+                                        FrmEmpleados.checkSubordinado.isSelected() && FrmEmpleados.cboxDir.getSelectedIndex() == 0) { 
+                                    JOptionPane.showMessageDialog(null, "Debe seleccionar un directivo diferente de cero");                                                                
+                                }else {  
+                                    boolean respuesta = empresa.existeDirectivo(idDir);                                    
+                                    if (respuesta == false && FrmEmpleados.checkDirectivo.isSelected()) {
+                                        JOptionPane.showMessageDialog(null, "Ya existe un directivo en esa categoria");
                                     } else {
-                                    JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
+                                        //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
+                                        sqlPackageDate = new java.sql.Date(FrmEmpleados.txtFechaNac.getDate().getTime());
+                                        /// Da formato a la fecha obtenida en la linea anterior
+                                        Date fNac = sqlPackageDate;    
+                                        //FrmEmpleados.txtCategoria.setEnabled(false);
+                                        empleado = new Empleado(tid, doc, nombre, apel, fNac, genero, edad, idEmpresa, salario, subor, idDir);
+                                        boolean res1 = empresa.duplicados(empleado);
+                                        if (res1 == true) {
+                                            JOptionPane.showMessageDialog(null, "Ya existe un empleado con el documento " + doc);                                
+                                        } else {
+                                            res = empresa.agregarEmpleado(empresa, empleado);
+                                            if (res == true) {
+                                                JOptionPane.showMessageDialog(null, "Datos almacenados exitosamente.");
+                                                listarEmpleados();
+                                                disenoTabla();
+                                                limpiarCampos();
+                                            } else {
+                                                JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
+                                            }
                                     }
+                                    }                                                                                                             
                                 }
                             }
-                            
                         }                           
                     }   
                 }
             }
         }
         
-        if (evt.getSource() == FrmEmpleados.btnActualizar2) {            
+        if (evt.getSource() == FrmEmpleados.btnActualizar2) {    
+            
             int fila = FrmEmpleados.tablaEmpleados.getSelectedRow();
             int idPersona = Integer.parseInt((String)FrmEmpleados.tablaEmpleados.getValueAt(fila, 0));
             int idEmpresa = empresa.getId();
             int idEmpleado = Integer.parseInt((String)FrmEmpleados.tablaEmpleados.getValueAt(fila, 9));            
-            int idDir = Integer.parseInt((String)FrmEmpleados.tablaEmpleados.getValueAt(fila, 12));
+            int idDir = FrmEmpleados.cboxDir.getSelectedIndex();
             String tid = FrmEmpleados.boxTID.getSelectedItem().toString();        
             String doc = FrmEmpleados.txtDoc.getText();
             String nombre = FrmEmpleados.txtNombre.getText().toUpperCase();            
@@ -145,31 +155,41 @@ public class ControllerEmpleados implements ActionListener {
                     if (salario <= 0.0 ) {
                         JOptionPane.showMessageDialog(null, "Valor del salario no permitido ");                
                     } else {
-                        if (FrmEmpleados.checkSubordinado.isSelected() && subor.equals("SI")) {
+                        if (FrmEmpleados.checkSubordinado.isSelected() && FrmEmpleados.checkDirectivo.isSelected()) {
                             JOptionPane.showMessageDialog(null, "Un empleado subordinado no puede ser directivo.");
                         } else {
-                            // Determina si la casilla directivo fue seleccionada            
-                            if (FrmEmpleados.checkDirectivo.isSelected() && FrmEmpleados.cboxDir.getSelectedIndex() == 0) { 
-                                JOptionPane.showMessageDialog(null, "Debe seleccionar un directivo diferente de cero");                                   
-                            } else {
-                                idDir = FrmEmpleados.cboxDir.getSelectedIndex();
-                                //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
-                                java.sql.Date sqlPackageDate = new java.sql.Date(FrmEmpleados.txtFechaNac.getDate().getTime());
-                                /// Da formato a la fecha obtenida en la linea anterior
-                                Date fNac = sqlPackageDate;                                    
-                                empleado = new Empleado(idPersona, tid, doc, nombre, apel, fNac, genero, edad, idEmpresa, idEmpleado, salario, subor, idDir);
-                                boolean res = empresa.modificarEmpleado(empleado, empresa);                   
-                                if (res == true) {
-                                    JOptionPane.showMessageDialog(null, "Datos Actualizados exitosamente.");
-                                    listarEmpleados();
-                                    disenoTabla();
-                                    limpiarCampos();
-                                    inhabilitarCampos();
-                                    inhabilitarbotones();
-                                } else {
-                                    JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
+                            if (!FrmEmpleados.checkSubordinado.isSelected() && !FrmEmpleados.checkDirectivo.isSelected()) {
+                                JOptionPane.showMessageDialog(null, "Un empleado debe puede ser subordinado o directivo.");
+                            }else {
+                                // Determina si la casilla directivo fue seleccionada            
+                                if (FrmEmpleados.checkDirectivo.isSelected() && FrmEmpleados.cboxDir.getSelectedIndex() == 0 ||
+                                            FrmEmpleados.checkSubordinado.isSelected() && FrmEmpleados.cboxDir.getSelectedIndex() == 0) { 
+                                    JOptionPane.showMessageDialog(null, "Debe seleccionar un directivo diferente de cero");                                   
+                                } else {                                                                       
+                                    boolean respuesta = empresa.existeDirectivo(idDir);                                    
+                                    if (respuesta == false && FrmEmpleados.checkDirectivo.isSelected()) {
+                                        JOptionPane.showMessageDialog(null, "No es permitido hacer cambios a un directivo");
+                                    } else {
+                                        idDir = FrmEmpleados.cboxDir.getSelectedIndex();
+                                        //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
+                                        java.sql.Date sqlPackageDate = new java.sql.Date(FrmEmpleados.txtFechaNac.getDate().getTime());
+                                        /// Da formato a la fecha obtenida en la linea anterior
+                                        Date fNac = sqlPackageDate;                                    
+                                        empleado = new Empleado(idPersona, tid, doc, nombre, apel, fNac, genero, edad, idEmpresa, idEmpleado, salario, subor, idDir);
+                                        boolean res = empresa.modificarEmpleado(empleado, empresa);                   
+                                        if (res == true) {
+                                            JOptionPane.showMessageDialog(null, "Datos Actualizados exitosamente.");
+                                            listarEmpleados();
+                                            disenoTabla();
+                                            limpiarCampos();
+                                            inhabilitarCampos();
+                                            inhabilitarbotones();
+                                        } else {
+                                            JOptionPane.showMessageDialog(null, "Error en el proceso de almacenamiento.");
+                                        }
+                                    }                                                                       
                                 }
-                            }
+                            }                            
                         }                        
                     }                    
                 }
@@ -205,8 +225,8 @@ public class ControllerEmpleados implements ActionListener {
                 if (comp1 || comp2) {
                     JOptionPane.showMessageDialog(null, "La acción seleccionada no tiene efecto.");
                 } else {            
-                    int op = JOptionPane.showConfirmDialog(null, "Esta seguro de eliminar el registro?"
-                        + "el registro?", "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                    int op = JOptionPane.showConfirmDialog(null, "Esta seguro de eliminar el registro?",
+                            "Advertencia", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                     if (op == JOptionPane.YES_OPTION) {
                         //Permite obtener solo la fecha 1900/01/01 desde un JDatechooser
                         java.sql.Date sqlPackageDate = new java.sql.Date(FrmEmpleados.txtFechaNac.getDate().getTime());
@@ -231,7 +251,8 @@ public class ControllerEmpleados implements ActionListener {
         }
         
         if (evt.getSource() == vista.btnBuscar) {
-            buscarEmpleados();
+            limpiarCampos2();  
+            buscarEmpleados();            
             disenoTabla();
         }
         
@@ -282,16 +303,24 @@ public class ControllerEmpleados implements ActionListener {
                 FrmEmpleados.btnMujer.setSelected(true);
             }
 
-            FrmEmpleados.txtSalario.setText(salario);
-            if (subordinado.equals("SI")) { FrmEmpleados.checkSubordinado.setSelected(true); 
-            } else { FrmEmpleados.checkSubordinado.setSelected(false); }            
-            if (directivo.equals("0")) { 
+            FrmEmpleados.txtSalario.setText(salario);            
+            
+            if (subordinado.equals("SI")) { 
+                FrmEmpleados.checkSubordinado.setSelected(true); 
                 FrmEmpleados.checkDirectivo.setSelected(false);   
                 FrmEmpleados.cboxDir.setSelectedIndex(Integer.parseInt(directivo));
             } else { 
+                FrmEmpleados.checkSubordinado.setSelected(false); 
                 FrmEmpleados.checkDirectivo.setSelected(true);                
                 FrmEmpleados.cboxDir.setSelectedIndex(Integer.parseInt(directivo));
-            }  
+            }            
+//            if (subordinado.equals("SI")) { 
+//                FrmEmpleados.checkDirectivo.setSelected(false);   
+//                FrmEmpleados.cboxDir.setSelectedIndex(Integer.parseInt(directivo));
+//            } else { 
+//                FrmEmpleados.checkDirectivo.setSelected(true);                
+//                FrmEmpleados.cboxDir.setSelectedIndex(Integer.parseInt(directivo));
+//            }  
         }
     }
      
@@ -418,6 +447,19 @@ public class ControllerEmpleados implements ActionListener {
         FrmEmpleados.checkDirectivo.setSelected(false);
         FrmEmpleados.cboxDir.setSelectedIndex(0);
         FrmEmpleados.txtBuscar.setText("");
+    }
+    
+    public void limpiarCampos2() {
+        FrmEmpleados.txtDoc.setText("");
+        FrmEmpleados.txtNombre.setText("");
+        FrmEmpleados.txtApellido.setText("");
+        FrmEmpleados.boxTID.setSelectedItem("Seleccione...");      
+        FrmEmpleados.txtFechaNac.setDate(null);
+        vista.radioGenero.clearSelection();
+        FrmEmpleados.txtSalario.setText("");
+        FrmEmpleados.checkSubordinado.setSelected(false);
+        FrmEmpleados.checkDirectivo.setSelected(false);
+        FrmEmpleados.cboxDir.setSelectedIndex(0);        
     }
 
     //Método para diseñar las columnas de la tabla Empleado

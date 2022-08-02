@@ -594,7 +594,7 @@ public class Empresa {
                         if (llavePrimariaCliente.next()) {
                             int idEmpleado = llavePrimariaCliente.getInt(1);                            
                             System.out.println(dir);
-                            if (!dir.isEmpty() && !dir.equals("0")) {
+                            if (empleado.getSubordinado().equals("") && !dir.equals("0")) {
                                 query = "INSERT INTO directivo(categoria, id_empleado) VALUES (?, ?)";
                                 PreparedStatement stDirectivo = ConexionBD.obtener().prepareStatement(query);
                                 stDirectivo.setInt(1, empleado.getIdDirectivo());
@@ -711,9 +711,8 @@ public class Empresa {
                     if (filaInsertada > 0 ) {
                         ResultSet llavePrimariaCliente = stEmpleado1.getGeneratedKeys();                                                
                         if (llavePrimariaCliente.next()) {
-                            int idEmpleado = llavePrimariaCliente.getInt(1);                            
-                            System.out.println(dir);
-                            if (!dir.equals("0")) {
+                            int idEmpleado = llavePrimariaCliente.getInt(1);                                                        
+                            if (empleado.getSubordinado().equals("") && !dir.equals("0")) {
                                 String queryDir = "INSERT INTO directivo(categoria, id_empleado) VALUES (?, ?)";
                                 PreparedStatement stDirectivo = ConexionBD.obtener().prepareStatement(queryDir);
                                 stDirectivo.setInt(1, empleado.getIdDirectivo());
@@ -748,12 +747,6 @@ public class Empresa {
                 stEmpleado1.executeUpdate();                
             }
             
-            if (empleado.getIdDirectivo() == 0) {
-                String queryDirectivo = ("DELETE FROM directivo WHERE id_empleado = ?");
-                PreparedStatement stDirectivo = ConexionBD.obtener().prepareStatement(queryDirectivo);                                          
-                stDirectivo.setInt(1, empleado.getIdEmpleado());  
-                stDirectivo.executeUpdate();
-            }
             
             if (!dir.equals("0") && comparadorDir.equals("")) {
                 String queryDir = "INSERT INTO directivo(categoria, id_empleado) VALUES (?, ?)";
@@ -761,7 +754,15 @@ public class Empresa {
                 stDirectivo.setInt(1, empleado.getIdDirectivo());
                 stDirectivo.setInt(2, empleado.getIdEmpleado());
                 stDirectivo.executeUpdate();
-            } 
+            } else {
+                if (empleado.getSubordinado().equals("SI")) {
+                    String queryDirectivo = ("DELETE FROM directivo WHERE id_empleado = ?");
+                    PreparedStatement stDirectivo = ConexionBD.obtener().prepareStatement(queryDirectivo);                                          
+                    stDirectivo.setInt(1, empleado.getIdEmpleado());  
+                    stDirectivo.executeUpdate(); 
+                }
+                 
+            }
             
             String queryPersona = ("UPDATE persona SET tid = ?, documento = ?, nombres = ?, "
                     + "apellidos = ?, fechaNac = ?, genero = ? WHERE id_persona = ?");
@@ -837,6 +838,27 @@ public class Empresa {
             System.out.println(e.getMessage());
             return false;
         }
-    }    
+    } 
+    
+    public boolean existeDirectivo(int categoria) {        
+        try {
+            String bandera = "";
+            String query = ("SELECT * FROM directivo WHERE categoria = ? "); 
+            PreparedStatement stDirectivo = ConexionBD.obtener().prepareStatement(query);
+            stDirectivo.setInt(1, categoria);           
+            
+            ResultSet res = stDirectivo.executeQuery();
+            
+            while(res.next()){
+                bandera = res.getString("id_directivo");
+            }            
+            
+            return bandera.isEmpty();                
+            
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            return false;
+        }
+    } 
 
 }

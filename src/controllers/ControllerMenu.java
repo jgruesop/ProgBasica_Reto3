@@ -22,7 +22,6 @@ public class ControllerMenu implements ActionListener{
     
     private final Empresa empresa;
       
-
     public ControllerMenu(FrmMenu vista, Empresa empresa) {
         this.vista = vista;           
         this.empresa = empresa;
@@ -42,28 +41,28 @@ public class ControllerMenu implements ActionListener{
     public void actionPerformed(ActionEvent evt) {
         
         if (evt.getSource() == vista.menuFormularioEmpleado) {
-            vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
-            vista.escritorio.repaint();  // Permite limpiar la ventana principal              
+            FrmMenu.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
+            FrmMenu.escritorio.repaint();  // Permite limpiar la ventana principal              
             FrmEmpleados ventana = new FrmEmpleados();  
             ControllerEmpleados ctrlEmpleado = new ControllerEmpleados(empresa, ventana);
-            vista.escritorio.add(ventana);
+            FrmMenu.escritorio.add(ventana);
             ventana.show(); 
         }
         
         if (evt.getSource() == vista.menuFormularioCliente) {            
-            vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
-            vista.escritorio.repaint();  // Permite limpiar la ventana principal          
+            FrmMenu.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
+            FrmMenu.escritorio.repaint();  // Permite limpiar la ventana principal          
             FrmClientes ventana = new FrmClientes();   
             ControllerClientes ctrlCliente = new ControllerClientes(empresa, ventana);
-            vista.escritorio.add(ventana);
+            FrmMenu.escritorio.add(ventana);
             ventana.show(); 
         }
         
         if (evt.getSource() == vista.menuConsultasEmpresa) {
-            vista.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
-            vista.escritorio.repaint();  // Permite limpiar la ventana principal             
+            FrmMenu.escritorio.removeAll(); // Permite cerrar cualquier ventana abierta
+            FrmMenu.escritorio.repaint();  // Permite limpiar la ventana principal             
             FrmConsulta ventana = new FrmConsulta(empresa);
-            vista.escritorio.add(ventana);
+            FrmMenu.escritorio.add(ventana);
             ventana.show(); 
         }               
         
